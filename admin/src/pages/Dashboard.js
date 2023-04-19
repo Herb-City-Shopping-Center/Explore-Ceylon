@@ -17,10 +17,11 @@ import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { mainListItems, secondaryListItems } from "../components/listItems";
-import Chart from "../components/Chart";
-import Deposits from "../components/Deposits";
-import Orders from "../components/Orders";
+import { mainListItems, secondaryListItems } from "../Admin_Components/listItems";
+import Chart from "../Admin_Components/Chart";
+import Deposits from "../Admin_Components/Deposits";
+import Orders from "../Admin_Components/Orders";
+import { UserButton, useUser, useSignUp, useAuth } from "@clerk/clerk-react";
 
 function Copyright(props) {
   return (
@@ -94,6 +95,10 @@ function DashboardContent() {
     setOpen(!open);
   };
 
+  const { user } = useUser();
+  const { userId, actor } = useAuth();
+
+  
   return (
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: "flex" }}>
@@ -116,6 +121,9 @@ function DashboardContent() {
             >
               <MenuIcon />
             </IconButton>
+            <UserButton />
+            {user ? <h3> Hello, {user.firstName}!</h3> : null}
+            {actor && <span>user {actor.sub} has </span>} logged in as user{userId}
             <Typography
               component="h1"
               variant="h6"
@@ -206,6 +214,7 @@ function DashboardContent() {
       </Box>
     </ThemeProvider>
   );
+                
 }
 
 export default function Dashboard() {

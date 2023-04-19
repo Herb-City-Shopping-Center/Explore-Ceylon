@@ -1,18 +1,38 @@
-import './App.css';
-import {Route} from 'react-router-dom'
-import LoginPage from './pages/Authentication/LoginPage';
-import SignupPage from './pages//Authentication/SignupPage';
-import ProfilePage from './pages/ProfilePage';
-import Navigation from './components/Navigation';
-import Dashboard from './pages/Dashboard';
+import "./App.css";
+import { Route } from "react-router-dom";
+
+import AdminDashboard from "./pages/Dashboard";
+import Blog from "./Client_Components/Blog";
+import GuideDashboard from "./Guide/GuideDashboard";
+import {
+
+
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  SignUp,
+  RedirectToSignIn,
+  SignIn,
+  UserButton,
+} from "@clerk/clerk-react";
+
+const clerkPubKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
 
 function App() {
   return (
     <div className="App">
-      <Route path="/admin" component={Dashboard} exact />
-      <Route path="/admin/signup" component={SignupPage} exact />
-      <Route path="/admin/login" component={LoginPage} exact />
-      <Route path="/admin/profile" component={ProfilePage} exact />
+      <ClerkProvider publishableKey={clerkPubKey}>
+        <Route path="/" component={Blog} exact />
+
+        <SignedIn>
+          <Route path="/guide/dashboard" component={GuideDashboard} exact />
+          <Route path="/admin" component={AdminDashboard} exact />
+        </SignedIn>
+
+        {/* <SignedOut>
+          <RedirectToSignIn />
+        </SignedOut> */}
+      </ClerkProvider>
     </div>
   );
 }
