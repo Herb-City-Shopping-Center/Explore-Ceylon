@@ -19,6 +19,8 @@ import {
 const clerkPubKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
 
 function App() {
+
+  
   return (
     <div className="App">
       <ClerkProvider publishableKey={clerkPubKey}>
@@ -29,9 +31,10 @@ function App() {
           <Route path="/admin" component={AdminDashboard} exact />
         </SignedIn>
 
-        {/* <SignedOut>
+        <SignedOut>
           <RedirectToSignIn />
-        </SignedOut> */}
+        </SignedOut>
+        
       </ClerkProvider>
     </div>
   );

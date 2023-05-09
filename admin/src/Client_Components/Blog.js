@@ -91,7 +91,7 @@ export default function Blog() {
       <CssBaseline />
       <Container maxWidth="lg">
         <Header title="Blog" sections={sections} />
-        <main>
+        <main> 
           <MainFeaturedPost post={mainFeaturedPost} />
           <Grid container spacing={4}>
             {featuredPosts.map((post) => (

@@ -1,34 +1,19 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
 
 //create tour modal
 const tourSchema = mongoose.Schema(
   {
-    userId: { type: "String", required: true },
+    serviceId: { type: "String", required: true },
     guideName: { type: "String", required: true },
-    packageStatus: { type: "String", default:"active" },
-    title: { type: "String", required: true, default: 0 },
+    packageStatus: { type: "String", default:"active" },//mnee to add in backend
+    packageTitle: { type: "String", required: true, default: 0 },
     description: { type: "String", required: true, default: 0 },
-    type: { type: "String", required: true, default: 0 },
     budget: { type: "String", required: true, default: 0 },
     numberOfDays: { type: "String", required: true, default: 0 },
     destination: { type: "String", required: true, default: 0 },
     numberOfPeoples: { type: "String", required: true, default: 0 },
-    numberOfDays: { type: "String", required: true, default: 0 },
-    vehicleType: { type: "String", required: true, default: 0 },
-    accommodations: [
-      {
-        type: mongoose.Schema.Types.ObjectId, // accommodationusers array
-        ref: "AccommodationCenters",
-      },
-    ],
-    EventsAndActivities: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Services",
-      },
-    ],
-
+    vehicleType: { type: "String", required: true, default:"Van"},
+    accommodations:{type: "String"},
     displayPic: {
       type: "String",
       require: true,
@@ -41,6 +26,6 @@ const tourSchema = mongoose.Schema(
   }
 );
 
-const Tour = mongoose.model("Tour", tourSchema);
+const TourPackage = mongoose.model("TourPackage", tourSchema);
 
-module.exports = Tour;
+module.exports = TourPackage;

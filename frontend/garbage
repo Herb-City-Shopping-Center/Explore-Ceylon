@@ -1,0 +1,58 @@
+const orderData = {
+      "fname": fname,
+      "lname": lname,
+      "addressLine1": addressLine1,
+      "addressLine2": addressLine2,
+      "city": city,
+      "state": state,
+      "zip": zip,
+      "country": country,
+      "quantity": quantity,
+      "productId": productId,
+      "shopId": shopId,
+      "customerId": customerId,
+      "deliverMethod": deliverMethod,
+      "unitPrice": unitPrice,
+      "total": total,
+      "title": title,
+      "pic": pic,
+    };
+
+    !fname ||
+      !lname ||
+      !addressLine1 ||
+      !addressLine2 ||
+      !city ||
+      !state ||
+      !zip ||
+      !country ||
+      !quantity ||
+      !deliveryMethod ||
+      !unitPrice ||
+      !total ||
+      !title ||
+      !pic ||
+      !deliveryMethod||
+      !deliverMethod
+
+      user ? setCustomerId(userId) : setCustomerId(null);
+
+    setQuantity(data.qty);
+    setProductId(data._id);
+    setShopId(data.shopId);
+    setUnitPrice(data.price);
+    setTotal(Number(data.price) * Number(data.qty));
+    setTitle(data.productTitle);
+    setPic(data.pic);
+
+    const deliverMethod = deliveryMethod.code;
+    const methodCost = deliveryMethod.cost;
+
+    setTotal(Number(data.price) * Number(data.qty) + Number(methodCost));
+
+    history.push({
+            pathname: url,
+            state: {
+              data: orderData,
+            },
+          });

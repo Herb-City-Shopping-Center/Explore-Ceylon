@@ -57,12 +57,12 @@ function MainFeaturedPost(props) {
             >
               {post.title}
             </Typography>
-            <Typography variant="h5" color="inherit" paragraph>
+            {/* <Typography variant="h5" color="inherit" paragraph>
               {post.description}
             </Typography>
             <Link variant="subtitle1" href="#">
               {post.linkText}
-            </Link>
+            </Link> */}
           </Box>
         </Grid>
       </Grid>
