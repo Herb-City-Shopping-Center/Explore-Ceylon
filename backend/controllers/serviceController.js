@@ -198,21 +198,22 @@ const addGuidePackage = asyncHandler( async(req,res)=>{
 // })
 
 const fetchService = asyncHandler(async(req,res)=>{
-console.log("Fetch shop".red.bold);
+
     const{ userId }= req.body;
-    console.log(userId);
+    console.log("user id "+userId.green.bold);
+
     const service = await ServiceSupplier.findOne({userId:userId});
 
-
+ 
     if(service){
         res.json({
             service
         });
         console.log(service);
     }else{
-        console.log("Error fetching shop".red.bold);
+        console.log("Error fetching service".red.bold);
         res.status(401);
-        throw new error("Error fetching shop");
+        throw new error("Error fetching service");
     }
 });
 

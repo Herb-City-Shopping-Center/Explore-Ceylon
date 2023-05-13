@@ -3,7 +3,7 @@ import { Route } from "react-router-dom";
 
 import AdminDashboard from "./pages/AdminDashboard";
 import HomePage from "./pages/HomePage";
-import ServiceSupplierDashboard from "./pages/ServiceSupplierDashboard";
+import ServiceSupplierDashboard from "./pages/ServiceSupplierDashboard"
 
 import {
   ClerkProvider,
@@ -17,6 +17,7 @@ import {
 import GuideBookings from "./Guide_Components/GuideBookings";
 import SellerShop from './Guide_Components/SellerShop';
 import GuidePackages from './Guide_Components/GuidePackages';
+
 import ProductView from "./Client_Components/ProductView";
 import Checkout from './Client_Components/orderCheckout/Checkout';
 import Stripe from "./Client_Components/orderCheckout/Stripe";
@@ -24,12 +25,15 @@ import PaymentForm from "./Client_Components/orderCheckout/PaymentForm";
 import Review from "./Client_Components/orderCheckout/Review";
 import Cart from "./Client_Components/Cart";
 import CustomerOrders from "./Client_Components/CustomerOrders";
+
 import GuideAndHotelMng from './Admin_Components/GuideAndHotelMng';
 import AdminOrders from './Admin_Components/TouristBookings';
 import Reviews from "./Admin_Components/Reviews";
 import Articals from "./Admin_Components/Articals";
+import HotelBookings from "./Hotel_Component/HotelBookings";
+import HotelPackages from "./Hotel_Component/HotelPackages";
 
-const clerkPubKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
+const clerkPubKey = 'pk_test_c3RyaWtpbmctbXVsbGV0LTgyLmNsZXJrLmFjY291bnRzLmRldiQ';
 
 function App() {
   return (
@@ -48,7 +52,12 @@ function App() {
           <Route path="/guide/dashboard" component={ServiceSupplierDashboard} exact />
           <Route path="/guide/bookings" component={GuideBookings} exact />
           <Route path="/guide/packages" component={GuidePackages} exact />
-          {/* <Route path="/guide/shop" component={sellerShop} exact /> */}
+
+          {/* Hotel  */}
+          <Route path="/hotel/dashboard" component={ServiceSupplierDashboard} exact />
+          <Route path="/hotel/bookings" component={HotelBookings} exact />
+          <Route path="/hotel/packages" component={HotelPackages} exact />
+          {/* <Route path="/hotel/bookings" component={HotelPackages} exact /> */}
 
           <Route path="/admin/guide-hotel-mng" component={GuideAndHotelMng} exact />
           <Route path="/admin/guide-review" component={Reviews} exact />

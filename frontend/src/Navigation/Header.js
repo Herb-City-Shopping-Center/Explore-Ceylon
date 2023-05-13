@@ -44,6 +44,10 @@ function Header(props) {
     getWeatherData();
   }, []);
 
+
+ //=============================================================
+ 
+ 
   const { user } = useUser();
   const { sections, title } = props;
 
@@ -98,7 +102,7 @@ function Header(props) {
                     onClick={toService}
                   >
                     <a href="">
-                      <u>Hotels and Guide Login</u>
+                      <u>Register Service</u>
                     </a>
                   </Typography>
                 </Tooltip>

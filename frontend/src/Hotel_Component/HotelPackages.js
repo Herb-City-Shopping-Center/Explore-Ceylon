@@ -20,13 +20,12 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
-import { mainListItems } from "./listItems";
 
 import Chart from "./Chart";
 import Deposits from "./Deposits";
 import Packages from "./Packages";
 import { UserButton, useUser, useSignUp, useAuth } from "@clerk/clerk-react";
-import { GuideServiceListItems } from "../Navigation/GuideServiceListItems";
+import { HotelServiceListItems } from "../Navigation/HotelServiceListItems";
 
 function Copyright(props) {
   return (
@@ -164,7 +163,7 @@ function SellerProducts(props) {
           </Toolbar>
           <Divider />
           <List component="nav">
-            {GuideServiceListItems}
+            {HotelServiceListItems}
             {/* <Divider sx={{ my: 1 }} />
             {secondaryListItems} */}
           </List>

@@ -20,7 +20,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
-import { mainListItems } from "./listItems";
+import { HotelServiceListItems, mainListItems } from "../Navigation/HotelServiceListItems";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -32,7 +32,6 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 
 import { UserButton, useUser, useSignUp, useAuth } from "@clerk/clerk-react";
-import { GuideServiceListItems } from "../Navigation/GuideServiceListItems";
 
 const drawerWidth = 240;
 
@@ -123,7 +122,7 @@ const theme = createTheme();
 
 const SellerServiceBaseUrl = process.env.REACT_APP_SELLER_SERVICE_BASE_URL;
 
-function SellerOrders(props) {
+function HotelBookings(props) {
   const { shop } = props;
 
   const [open, setOpen] = React.useState(true);
@@ -254,7 +253,7 @@ function SellerOrders(props) {
           </Toolbar>
           <Divider />
           <List component="nav">
-            {GuideServiceListItems}
+            {HotelServiceListItems}
             {/* <Divider sx={{ my: 1 }} />
             {secondaryListItems} */}
           </List>
@@ -360,4 +359,4 @@ function SellerOrders(props) {
   );
 }
 
-export default SellerOrders;
+export default HotelBookings;

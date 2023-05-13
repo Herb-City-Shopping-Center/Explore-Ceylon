@@ -15,7 +15,7 @@ function createData(id, date, name, shipTo, paymentMethod, amount) {
 const rows = [
   createData(
     0,
-    "01 Feb 2000",
+    "16 Mar, 2019",
     "Elvis Presley",
     "Tupelo, MS",
     "VISA ⠀•••• 3719",
