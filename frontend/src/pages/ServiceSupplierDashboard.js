@@ -539,7 +539,7 @@ function ServiceRegisterForm() {
                       />
                     )}
                     onChange={(event, newValue) => {
-                      setServiceType(newValue.label);
+                      setServiceType(newValue.label); setServiceCode(newValue.code);
                     }}
                   />
                   </Grid>
@@ -582,6 +582,7 @@ function ServiceRegisterForm() {
 }
 
 export default function ServiceSupplierDashboard() {
+
   const { user } = useUser();
   const { userId, actor } = useAuth();
   const [serviceAccount, setServiceAccount] = useState(null);
@@ -591,26 +592,22 @@ export default function ServiceSupplierDashboard() {
     console.log(BASE_URL);
 
     try {
-
       const config = {
         headers: {
           "Content-type": "application/json",
         },
       };
-
       const { data } = await axios.post(
-
         "/api/service/get-service-by-user-id",
         {
           userId,
         },
-
         config
       );
       console.log(data);
       setServiceAccount(data);
       localStorage.setItem("serviceInfo", JSON.stringify(data));
-    } 
+    }
     catch (error) {
       console.log("Errorrrr");
       console.log(error.message);
@@ -623,12 +620,9 @@ export default function ServiceSupplierDashboard() {
 
   console.log("========================Service Account===========================");
   console.log(serviceAccount);
-  if(serviceAccount==null){
-    return <>Loading....</>;
-  }
-  else if (!serviceAccount) {
+  if (!serviceAccount) {
     return <ServiceRegisterForm />;
-  } 
+  }
   else {
     return <DashboardContent serviceAccount={serviceAccount} />;
   }
