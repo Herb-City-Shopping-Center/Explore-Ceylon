@@ -5,6 +5,7 @@ const cors = require("cors");
 const app = express();
 require("dotenv").config({ path: "./config.env" });
 const serviceRoutes = require("./routes/serviceRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 // const postRoutes = require("./routes/postRoute");
 const { errorHandler, notFound } = require("./middleware/errorMiddleware.js");
 
@@ -34,7 +35,7 @@ if (server) {
 }
 
 app.use("/api/service", serviceRoutes);
-// app.use("/api/post", postRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.use(errorHandler);
 app.use(notFound);
