@@ -146,7 +146,10 @@ function AdminSellers() {
   const [currentViewServiceServices, setCurrentViewServiceServices] = React.useState(null);
   const [shopStatus, setShopStatus] = React.useState(false);
   const [servicePackages, setServicePackages] = React.useState(null);
-  const [revenue, setRevenue] = React.useState(0);
+  const [loginData, setLoginData] = React.useState(
+    JSON.parse(localStorage.getItem("adminInfo"))
+  );
+  var revenue=0;
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -186,6 +189,7 @@ function AdminSellers() {
        const config = {
          headers: {
            "Content-type": "application/json",
+           Authorization: `Bearer ${loginData.token}`,
          },
        };
        const { data } = await axios.post(
@@ -195,10 +199,11 @@ function AdminSellers() {
        );
 
        setServices(data);
+       console.log("services============");
        console.log(data);
 
-       for (let i = 0; i < data.length; i++) {
-         setRevenue(revenue + data[i].paymentDue);
+       for (let i = 0; i < data.services.length; i++) {
+         revenue = revenue + Number(data.services[i].paymentDue);
        }
 
      } catch (error) {
@@ -219,6 +224,7 @@ function AdminSellers() {
       const config = {
         headers: {
           "Content-type": "application/json",
+          Authorization: `Bearer ${loginData.token}`,
         },
       };
       const { data } = await axios.post(
@@ -253,6 +259,7 @@ function AdminSellers() {
         const config = {
           headers: {
             "Content-type": "application/json",
+            Authorization: `Bearer ${loginData.token}`,
           },
         };
         const { data } = await axios.post(

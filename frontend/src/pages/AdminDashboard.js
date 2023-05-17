@@ -26,6 +26,15 @@ import Deposits from "../Admin_Components/Deposits";
 import Orders from "../Admin_Components/Orders";
 import { UserButton, useUser, useSignUp, useAuth } from "@clerk/clerk-react";
 
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Swal from "sweetalert2";
+import axios from "axios";
+
 function Copyright(props) {
   return (
     <Typography
@@ -223,6 +232,168 @@ function DashboardContent() {
   );
 }
 
+function LoginForm(){
+
+  const [loginStatus,setLoginStatus] = React.useState(false);
+  const [userName,setUserName] = React.useState(null);
+  const [password,setPassword] = React.useState(null);
+
+  const handleSubmit = async(event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    setUserName(data.get('userName'));
+    setPassword(data.get('password'));
+    console.log({
+      userName: data.get('userName'),
+      password: data.get('password'),
+    });
+
+    var isSuccess = true;
+
+    if (!data.get("userName")) {
+      isSuccess = false;
+      Swal.fire({
+        title: "Error!",
+        text: "Please enter user name !!!",
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "red",
+      });
+    }
+
+    if (!data.get("password")) {
+      isSuccess = false;
+      Swal.fire({
+        title: "Error!",
+        text: "Please enter password !!!",
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "red",
+      });
+    }
+    if (isSuccess) {
+      try {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+          },
+        };
+        const { data } = await axios.post(
+          "http://localhost:5000/api/admin/authAdmin",
+          {
+            userName,
+            password,
+          },
+
+          config
+        );
+        console.log(data);
+
+        localStorage.setItem("adminInfo", JSON.stringify(data));
+        console.log(data.token);
+
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Login success",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        setLoginStatus(true);
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: error.response.data.error,
+          footer: '<a href="">Why do I have this issue?</a>',
+        });
+
+        console.log(`Error occured ${error.response.data.message}`);
+        console.log(error.response);
+      }
+    }
+
+  };
+
+  if(loginStatus){
+    return <DashboardContent/>
+  }
+  else{
+    return (
+      <ThemeProvider theme={mdTheme}>
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
+          <Box
+            sx={{
+              marginTop: 8,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign in
+            </Typography>
+            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="userName"
+                label="User Name"
+                name="userName"
+                autoComplete="userName"
+                autoFocus
+                onChange={(e)=>setUserName(e.target.value)}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                onChange={(e)=>setPassword(e.target.value)}
+              />
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Remember me"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign In
+              </Button>
+              <Grid container>
+                <Grid item xs>
+                  <Link href="#" variant="body2">
+                    Forgot password?
+                  </Link>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        </Container>
+      </ThemeProvider>
+    );
+  }
+}
+
 export default function Dashboard() {
-  return <DashboardContent />;
+
+  const { user } = useUser();
+  const { userId, actor } = useAuth();
+
+   
+
+  return <LoginForm />;
+
 }
