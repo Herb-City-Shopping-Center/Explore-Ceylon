@@ -22,14 +22,23 @@ const tourBookingSchema = mongoose.Schema(
     numberOfPeoples: { type: "String", required: true, default: "0" },
     numberOfDays: { type: "String", required: true, default: "0" },
     vehicleType: { type: "String", required: true, default: "0" },
+    review: { type: "String", default: "0" },
     accommodations: [
       {
         type: mongoose.Schema.Types.ObjectId, // accommodationusers array
-        ref: "ServiceSuppliers",
+        ref: "AccommodationCenters",
       },
     ],
+    EventsAndActivities: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Services",
+      },
+    ],
+
     displayPic: {
       type: "String",
+      require: true,
       default:
         "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
     },

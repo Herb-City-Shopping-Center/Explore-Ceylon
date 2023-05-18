@@ -43,6 +43,7 @@ function App() {
         <Route path="/product/view" component={ProductView} exact />
 
         <SignedIn>
+          <Route path="/admin" component={AdminDashboard} exact />
           <Route path="/product/checkout" component={Checkout} exact />
           <Route path="/cart" component={Cart} exact />
           <Route path="/orders" component={CustomerOrders} exact />
@@ -58,7 +59,6 @@ function App() {
           <Route path="/hotel/packages" component={HotelPackages} exact />
           {/* <Route path="/hotel/bookings" component={HotelPackages} exact /> */}
 
-          <Route path="/admin" component={AdminDashboard} exact />
           <Route path="/admin/guide-hotel-mng" component={GuideAndHotelMng} exact />
           <Route path="/admin/guide-review" component={Reviews} exact />
           <Route path="/admin/guide-articals" component={Articals} exact />

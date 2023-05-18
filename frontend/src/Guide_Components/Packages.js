@@ -269,12 +269,12 @@ export default function Packages() {
     }
   };
 
-  const update = async (packages) => {
+  const update = async (product) => {
 
-    var _id = packages._id;
+    var _id = product._id;
 
     if(!accommodations){
-      setAccommodations(packages.accommodations);
+      setAccommodations(product.categoryName);
     }
     
 
@@ -308,7 +308,7 @@ export default function Packages() {
           },
         };
         const { data } = await axios.post(
-          "/api/service/update-guide-package",
+          SellerServiceBaseUrl + "/shop/updateProduct",
           {
             _id,
           },

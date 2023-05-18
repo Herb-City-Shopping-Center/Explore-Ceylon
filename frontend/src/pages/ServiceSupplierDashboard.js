@@ -682,23 +682,6 @@ function ServiceRegisterForm() {
                         setServiceCode(newValue.code)
                       }}
                     />
-                  <Autocomplete
-                    id="clear-on-escape"
-                    options={serviceTypes}
-                    clearOnEscape
-                    variant="standard"
-                    
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Service Type"
-                        variant="standard"
-                      />
-                    )}
-                    onChange={(event, newValue) => {
-                      setServiceType(newValue.label); setServiceCode(newValue.code);
-                    }}
-                  />
                   </Grid>
                   <Grid item xs={12} sm={12}>
                     <TextField
@@ -739,8 +722,7 @@ function ServiceRegisterForm() {
 }
 
 export default function ServiceSupplierDashboard() {
-
-  const { user } = useUser();
+  const { user, serviceCode } = useUser();
   const { userId, actor } = useAuth();
   const [serviceAccount, setServiceAccount] = useState(null);
 
@@ -748,21 +730,14 @@ export default function ServiceSupplierDashboard() {
     console.log(userId);
     console.log(serviceAccount);
     try {
-      const config = {
-        headers: {
-          "Content-type": "application/json",
-        },
-      };
-      const { data } = await axios.post(
-        "/api/service/get-service-by-user-id",
-        {
-          userId,
-        },
-        config
-      );
-      console.log(data);
+
+      const config = { headers: { "Content-type": "application/json", }, };
+
+      const { data } = await axios.post("/api/service/get-service-by-user-id", { userId }, config);
+
       setServiceAccount(data);
       localStorage.setItem("serviceInfo", JSON.stringify(data));
+      console.log(data);
     }
     catch (error) {
       console.log("Errorrrr");
@@ -775,8 +750,7 @@ export default function ServiceSupplierDashboard() {
     getServiceAccount();
   }, []);
 
-  console.log("========================Service Account===========================");
-  console.log(serviceAccount);
+
   if (!serviceAccount) {
     return <ServiceRegisterForm />;
   }

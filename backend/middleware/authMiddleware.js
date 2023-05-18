@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const Admin = require("../models/Admin");
+const User = require("../models/userModal");
 const asyncHandler = require("express-async-handler");
 
 //user identification by jwt token
@@ -19,7 +19,7 @@ const protect = asyncHandler(async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
       //send response removing password
-      req.user = await Admin.findById(decoded.id).select("-password");
+      req.user = await User.findById(decoded.id).select("-password");
 
       //moving next function in order
       next();
