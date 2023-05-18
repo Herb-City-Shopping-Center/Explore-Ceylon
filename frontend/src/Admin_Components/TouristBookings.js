@@ -36,6 +36,7 @@ import axios from "axios";
 import Button from "@mui/material/Button";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import Swal from "sweetalert2";
+import { useState } from "react";
 
 const drawerWidth = 240;
 
@@ -170,6 +171,9 @@ function AdminOrders() {
   const [viewOrderStatus, setViewOrderStatus] = React.useState(false);
   const [currentViewOrder, setCurrentViewOrder] = React.useState(null);
   const [orderStatus, setOrderStatus] = React.useState(false);
+  const [loginData, setLoginData] = useState(
+    JSON.parse(localStorage.getItem("adminInfo"))
+  );
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -177,6 +181,7 @@ function AdminOrders() {
 
   const { user } = useUser();
   const { userId, actor } = useAuth();
+
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -192,6 +197,7 @@ function AdminOrders() {
       const config = {
         headers: {
           "Content-type": "application/json",
+          Authorization: `Bearer ${loginData.token}`,
         },
       };
       const { data } = await axios.post(

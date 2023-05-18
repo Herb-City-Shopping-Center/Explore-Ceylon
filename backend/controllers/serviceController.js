@@ -155,47 +155,49 @@ const addGuidePackage = asyncHandler( async(req,res)=>{
 
 // })
 
-// const updateShop = asyncHandler(async(req,res)=>{
+const updateGuidePackage = asyncHandler(async(req,res)=>{
 
-//     const{shopId,shopName,shopAddress,shopDescription,shopProvince,shopLogo}=req.body;
-//     console.log(shopId+shopName+shopAddress+shopDescription+shopProvince);
+    const{shopId,shopName,shopAddress,shopDescription,shopProvince,shopLogo}=req.body;
+    console.log(shopId+shopName+shopAddress+shopDescription+shopProvince);
 
-//     if(!shopName ||!shopAddress || !shopDescription || !shopProvince || !shopId){
-//          res.status(400);
-//         throw new error("Invalid data passes into backend request!!!");
-//     }else{
-//         const updateShop = await Shop.findByIdAndUpdate(shopId,{
-//             shopName:shopName,
-//             shopAddress:shopAddress,
-//             shopDescription:shopDescription,
-//             shopProvince:shopProvince,
-//             shopLogo:shopLogo,
-//         },
-//         {
-//             new: true,
-//         });
+    if(!shopName ||!shopAddress || !shopDescription || !shopProvince || !shopId){
+         res.status(400);
+        throw new error("Invalid data passes into backend request!!!");
+    }
+    else{
+        const updateShop = await Shop.findByIdAndUpdate(shopId,{
+            shopName:shopName,
+            shopAddress:shopAddress,
+            shopDescription:shopDescription,
+            shopProvince:shopProvince,
+            shopLogo:shopLogo,
+        },
+        {
+            new: true,
+        });
 
-//         if(updateShop){
-//             res.status(201).json({
-//              _id:updateShop._id,
-//             shopName:updateShop.shopName,
-//             shopAddress:updateShop.shopAddress,
-//             shopDescription:updateShop.shopDescription,
-//             shopProvince:updateShop.shopProvince,
-//             shopLogo:updateShop.shopLogo,
-//             rank:updateShop.rank,
-//             userId:updateShop.userId,
-//             token:genarateToken(updateShop._id),
-//             })
 
-//             console.log(updateShop);
-//         }else{
-//         res.status(400);
-//         throw new error("Shop not updated !!!");
-//     }
-//     }
+        if(updateShop){
+            res.status(201).json({
+             _id:updateShop._id,
+            shopName:updateShop.shopName,
+            shopAddress:updateShop.shopAddress,
+            shopDescription:updateShop.shopDescription,
+            shopProvince:updateShop.shopProvince,
+            shopLogo:updateShop.shopLogo,
+            rank:updateShop.rank,
+            userId:updateShop.userId,
+            token:genarateToken(updateShop._id),
+            })
 
-// })
+            console.log(updateShop);
+        }else{
+        res.status(400);
+        throw new error("Shop not updated !!!");
+    }
+    }
+
+});
 
 const fetchService = asyncHandler(async(req,res)=>{
 
@@ -233,4 +235,4 @@ const fetchPackages = asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = {registerService,fetchService,fetchPackages,addGuidePackage}
+module.exports = {registerService,fetchService,fetchPackages,addGuidePackage,updateGuidePackage}
