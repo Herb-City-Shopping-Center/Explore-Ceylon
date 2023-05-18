@@ -11,6 +11,9 @@ const serviceSupplierSchema = mongoose.Schema(
     serviceType: { type: "String", required: true },
     serviceCode: { type: "Number", required: true },
     serviceStatus: { type: "Number", default:1 },
+    feedbacks: [ {type: "String"} ],
+    noOfBookings: { type: "Number", default:0 },
+    paymentDue: { type: "Number", default:0 },
     profileImage: {
       type: "String",
       require: true,

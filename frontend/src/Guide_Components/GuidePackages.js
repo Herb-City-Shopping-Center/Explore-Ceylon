@@ -140,7 +140,7 @@ function SellerProducts(props) {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Products
+              Packages
             </Typography>
             <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">

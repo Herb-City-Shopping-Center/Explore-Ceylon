@@ -204,6 +204,7 @@ export default function Packages() {
   const publish = async (event) => {
     setUpdateProgress("block");
     setUpdateBtnOpacity(0.5);
+    console.log("!!!!!!!!!!!!!!!!!!!!");
     var isSuccess = true;
     if (!packageTitle || !guideName || !budget || !destination || !description) {
       Swal.fire({
@@ -239,8 +240,6 @@ export default function Packages() {
             vehicleType,
             accommodations,
             displayPic,
-
-           
           },
           config
         );
@@ -272,12 +271,13 @@ export default function Packages() {
   const update = async (product) => {
 
     var _id = product._id;
+    console.log("1111111");
 
-    if(!accommodations){
+    if(product.accommodations===currentUpdate.accommodations){
       setAccommodations(product.categoryName);
+      console.log(product.categoryName);
     }
-    
-
+  
     setUpdateProgress("block");
     setUpdateBtnOpacity(0.5);
     var isSuccess = true;
@@ -341,6 +341,7 @@ export default function Packages() {
       }
     }
   };
+
   const deleteProduct = async (id) => {
 
     if(!id){
@@ -457,7 +458,11 @@ export default function Packages() {
               Image not uploaded!
             </Alert>
           </Snackbar>
+
+          {/* guide package form */}
           <Grid container spacing={3}>
+
+          {/* setGuideName */}
           <Grid item xs={12} sm={12}>
               <TextField
                 required
@@ -470,6 +475,7 @@ export default function Packages() {
               />
             </Grid>
 
+            {/* setPackageTitle */}
             <Grid item xs={12} sm={12}>
               <TextField
                 required
@@ -481,6 +487,7 @@ export default function Packages() {
               />
             </Grid>
 
+            {/* setAccommodations */}
             <Grid item xs={12} sm={12}>
               <TextField
                 required
@@ -491,6 +498,8 @@ export default function Packages() {
                 onChange={(e) => setAccommodations(e.target.value)}
               />
             </Grid>
+
+            {/* etBudget */}
             <Grid item xs={12}>
               <TextField
                 required
@@ -503,6 +512,8 @@ export default function Packages() {
                 onChange={(e) => setBudget(e.target.value)}
               />
             </Grid>
+
+            {/* setNumberOfDays */}
             <Grid item xs={12}>
               <TextField
                 required
@@ -514,7 +525,10 @@ export default function Packages() {
                 type="Number"
                 onChange={(e) => setNumberOfDays(e.target.value)}
               />
+            
             </Grid>
+
+            {/* setDestination */}
             <Grid item xs={12}>
               <TextField
                 required
@@ -525,6 +539,8 @@ export default function Packages() {
                 onChange={(e) => setDestination(e.target.value)}
               />
             </Grid>
+
+            {/* setNumberOfPeoples */}
             <Grid item xs={12}>
               <TextField
                 required
@@ -535,6 +551,8 @@ export default function Packages() {
                 onChange={(e) => setNumberOfPeoples(e.target.value)}
               />
             </Grid>
+
+            {/* setVehicleType */}
             <Grid item xs={12}>
               <TextField
                 required
@@ -545,6 +563,8 @@ export default function Packages() {
                 onChange={(e) => setVehicleType(e.target.value)}
               />
             </Grid>
+
+            {/* setDescription */}
             <Grid item xs={12}>
               <TextField
                 required
@@ -561,6 +581,7 @@ export default function Packages() {
               />
             </Grid>
           </Grid>
+          
           <Box sx={{ width: "100%", display: updateProgress }}>
             <LinearProgress />
           </Box>

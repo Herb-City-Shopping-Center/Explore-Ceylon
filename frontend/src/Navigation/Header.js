@@ -58,7 +58,7 @@ function Header(props) {
   };
 
   const toService = () => {
-    history.push("/guide/dashboard");
+    history.push("/service/dashboard");
   };
 
   return (
