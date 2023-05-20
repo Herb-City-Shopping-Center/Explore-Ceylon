@@ -20,15 +20,16 @@ function MainFeaturedPost(props) {
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
         backgroundImage: `url(${post.image})`,
+        minHeight:"60vh"
       }}
     >
       {/* Increase the priority of the hero background image */}
       {
-        <img
-          style={{ display: "none" }}
-          src={post.image}
-          alt={post.imageText}
-        />
+        // <img
+        //   style={{ display: "none" }}
+        //   src={post.image}
+        //   alt={post.imageText}
+        // />
       }
       <Box
         sx={{

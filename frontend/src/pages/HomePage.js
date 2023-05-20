@@ -13,6 +13,7 @@ import Typography from "@mui/material/Typography";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import Devider from "@mui/material/Divider";
 
 const sections = [
   { title: "Home", url: "/" },
@@ -21,27 +22,24 @@ const sections = [
 ];
 
 const mainFeaturedPost = {
-  title: "Sri Lanka's Largets Ayurvedic/Herbal medicines and supplements Store",
+  title: "",
   description:
     "Multiple lines of text that form the lede, informing new readers quickly and efficiently about what's most interesting in this post's contents.",
-  // image:
-  //   "https://res.cloudinary.com/cake-lounge/image/upload/v1681985800/farmherbs-kajalmela-web-banner_zos46i.jpg",
   image:
-    "https://res.cloudinary.com/cake-lounge/image/upload/v1681985807/banner_3_1_pbspna.jpg",
+    "https://res.cloudinary.com/cake-lounge/image/upload/v1684346294/sri-lanka-tourism-header-vector-30029652_jzlalk.jpg",
   imageText: "main image description",
   linkText: "Continue reading…",
 };
 
 const theme = createTheme();
 
-const UserServiceBaseUrl = process.env.REACT_APP_USER_SERVICE_BASE_URL;
 
 export default function Blog() {
   const [products, setProducts] = useState([]);
 
-  const getAllProducts = async () => {
+  const getAllHotelPackages = async () => {
     console.log("------------------------------");
-    console.log(UserServiceBaseUrl);
+    console.log();
     console.log("------------------------------");
     try {
       const config = {
@@ -50,7 +48,7 @@ export default function Blog() {
         },
       };
       const { data } = await axios.post(
-        UserServiceBaseUrl + "/user/getAllProducts",
+        "/api/user/getAllHotelPackages",
         {},
         config
       );
@@ -71,7 +69,7 @@ export default function Blog() {
       <CssBaseline />
 
       <Container>
-        <Header title="Welcome to Herb-City" sections={sections} />
+        <Header title="Welcome to Explore-Ceylon" sections={sections} />
 
         <main>
           <MainFeaturedPost post={mainFeaturedPost} />
@@ -90,11 +88,22 @@ export default function Blog() {
               noWrap
               sx={{ flex: 1, fontStyle: "italic" }}
             >
-              Most Popular Products
+              Our Services
             </Typography>
           </Toolbar>
 
-          <Grid container spacing={4}>
+            <Devider/>
+          <Grid container spacing={4} sx={{minHeight:"10vh"}}>
+            {products.Products ? (
+              products.Products.map((product) => (
+                <Products key={product.productTitle} product={product} />
+              ))
+            ) : (
+              <div>Loading...</div>
+            )}
+          </Grid>
+          <Devider/>
+          <Grid container spacing={4} sx={{minHeight:"10vh"}}>
             {products.Products ? (
               products.Products.map((product) => (
                 <Products key={product.productTitle} product={product} />

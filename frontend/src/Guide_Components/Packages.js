@@ -35,6 +35,7 @@ import CardContent from "@mui/material/CardContent";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { red } from "@mui/material/colors";
 import EditIcon from "@mui/icons-material/Edit";
+import MenuItem from '@mui/material/MenuItem';
 
 import { useAuth,useUser } from "@clerk/clerk-react";
 
@@ -84,7 +85,7 @@ export default function Packages() {
   const [destination, setDestination] = React.useState(null);
   const [numberOfPeoples, setNumberOfPeoples] = React.useState(null);
   const [vehicleType, setVehicleType] = React.useState(null);
-  const [accommodations, setAccommodations] = React.useState();
+  const [accommodations, setAccommodations] = React.useState(null);
   const [description, setDescription] = React.useState(null);
   const [displayPic, setDisplayPic] = React.useState(null);
 
@@ -96,6 +97,7 @@ export default function Packages() {
   const [updateProgress, setUpdateProgress] = React.useState("none");
   const [updateBtnOpacity, setUpdateBtnOpacity] = React.useState(1);
   const [packages, setPackages] = React.useState(null);
+  const [hotels, setHotels] = React.useState(null);
 
   const fileInput = React.useRef();
 
@@ -146,8 +148,32 @@ export default function Packages() {
     }
   };
 
+  const getAllHotels = async () => {
+    try {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
+      const { data } = await axios.post(
+        "http://localhost:5000/api/service/getAllHotels",
+        {
+        },
+
+        config
+      );
+      console.log("==================Hotel List================");
+      console.log(data);
+      setHotels(data);
+    } catch (error) {
+      console.log("Error getting Hotels");
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getPackagesByServiceId();
+    getAllHotels();
   }, []);
 
   const editProduct = (packages) => {
@@ -205,7 +231,7 @@ export default function Packages() {
     setUpdateProgress("block");
     setUpdateBtnOpacity(0.5);
     var isSuccess = true;
-    if (!packageTitle || !guideName || !budget || !destination || !description) {
+    if (!packageTitle || !guideName || !budget || !destination || !description|| !accommodations) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -400,6 +426,9 @@ export default function Packages() {
    
   };
   if (addPackageState && !packageUpdateState) {
+
+    console.log(accommodations);
+
     return (
       <div className="edit_form">
         <input
@@ -482,14 +511,22 @@ export default function Packages() {
             </Grid>
 
             <Grid item xs={12} sm={12}>
-              <TextField
-                required
-                label="Accommodation Name"
-                fullWidth
-                autoComplete="given-name"
-                variant="standard"
-                onChange={(e) => setAccommodations(e.target.value)}
-              />
+            <TextField
+              id="outlined-select-currency"
+              select
+              label="Select"
+              fullWidth
+              defaultValue="Loading..."
+              helperText="Please add accommodation"
+              variant="standard"
+              onChange={(e)=>setAccommodations(e.target.value)}
+            >
+              {hotels.hotels.map((option) => (
+                <MenuItem key={option._id} value={option._id}>
+                  {option.serviceName}
+                </MenuItem>
+              ))}
+            </TextField>
             </Grid>
             <Grid item xs={12}>
               <TextField

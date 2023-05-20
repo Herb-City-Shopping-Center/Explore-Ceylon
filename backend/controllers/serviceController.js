@@ -234,4 +234,21 @@ const fetchPackages = asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = {registerService,fetchService,fetchPackages,addGuidePackage,updateGuidePackage}
+const getAllHotels = asyncHandler(async(req,res)=>{
+
+
+    const hotels = await ServiceSupplier.find({ serviceCode: { $in: 1 } });
+    
+        if(hotels){
+            res.json({
+                hotels
+            });
+        }else{
+            console.log("Error fetching Hotels".red.bold);
+            res.status(401);
+            throw new error("Error fetching Hotels");
+        }
+});
+
+
+module.exports = {registerService,fetchService,fetchPackages,addGuidePackage,updateGuidePackage,getAllHotels}
