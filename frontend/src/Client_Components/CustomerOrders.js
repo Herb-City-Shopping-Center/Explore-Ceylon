@@ -31,25 +31,25 @@ import Swal from "sweetalert2";
 
 
 const columns = [
-  { id: "pic", label: "Image", minWidth: 170 },
-  { id: "productTitle", label: "Product Title", minWidth: 100 },
+  { id: "fname", label: "Name", minWidth: 170 },
+  { id: "email", label: "Email", minWidth: 100 },
   {
-    id: "quantity",
-    label: "Quantity",
+    id: "date",
+    label: "Date",
     minWidth: 170,
     align: "right",
     format: (value) => value.toLocaleString("en-US"),
   },
   {
-    id: "orderTotal",
-    label: "Order Total",
+    id: "selectedCity",
+    label: "Pickup City",
     minWidth: 170,
     align: "right",
     format: (value) => value.toLocaleString("en-US"),
   },
   {
-    id: "orderStatus",
-    label: "Order Status",
+    id: "customerPhone",
+    label: "Contact No",
     minWidth: 170,
     align: "right",
     format: (value) => value.toFixed(2),
@@ -58,8 +58,8 @@ const columns = [
 
 const sections = [
   { title: "Home", url: "/" },
-  { title: "Cart", url: "/cart" },
-  { title: "Orders", url: "/orders" },
+  { title: "Tour Bookings", url: "/bookings" },
+  { title: "Hotel Bookings", url: "/hotel-bookings" },
 ];
 
 function isValidUrl(string) {
@@ -82,12 +82,12 @@ function CustomerOrders() {
   const [viewOrderStatus, setViewOrderStatus] = React.useState(false);
   const [currentViewOrder, setCurrentViewOrder] = React.useState(null);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [orders, setOrders] = React.useState([]);
+  const [bookings, setBookings] = React.useState([]);
   const [orderStatus, setOrderStatus] = React.useState(false);
 
 
 
-  const getOrdersByUserId = async () => {
+  const getBookingsByUserId = async () => {
     try {
       const config = {
         headers: {
@@ -95,19 +95,19 @@ function CustomerOrders() {
         },
       };
       const { data } = await axios.post(
-        UserServiceBaseUrl + "/user/getOrdersByUserId",
+        "/api/user/getBookingsByUserId",
         { userId },
         config
       );
 
-      setOrders(data);
+      setBookings(data);
       console.log(data);
     } catch (error) {
-      console.log(error.response.data.error);
+      console.log(error.response);
     }
   };
   useEffect(() => {
-    getOrdersByUserId();
+    getBookingsByUserId();
   }, []);
 
   const handleChangePage = (event, newPage) => {
@@ -159,7 +159,7 @@ function CustomerOrders() {
         setDeleteOrderId(null);
         closeOrder();
         console.log(data);
-        getOrdersByUserId();
+        getBookingsByUserId();
       } catch (error) {
         setDeleteOrderId(null);
         console.log(error.response.data.error);
@@ -183,10 +183,10 @@ function CustomerOrders() {
               </IconButton>
             </Tooltip>
             <Typography variant="h6" gutterBottom>
-              Order Details
+              Booking Details
             </Typography>
             <Avatar
-              src={currentViewOrder.pic ? currentViewOrder.pic : null}
+              src={currentViewOrder.packageInfo.displayPic ? currentViewOrder.packageInfo.displayPic : null}
               sx={{ width: "300px", height: "300px", marginLeft: "140px" }}
               variant="square"
             ></Avatar>
@@ -199,32 +199,32 @@ function CustomerOrders() {
                 <Grid container spacing={3}>
                   <Grid item xs={12} sm={12}>
                     <Typography variant="h6" gutterBottom>
-                      {currentViewOrder.productTitle}
+                      {currentViewOrder.packageInfo.packageTitle}
                     </Typography>
                     <List disablePadding>
                       <ListItem
-                        key={currentViewOrder.price}
+                        key={currentViewOrder.packageInfo.budget}
                         sx={{ py: 1, px: 0 }}
                       >
                         <ListItemText primary={"Unit Price"} />
 
                         <Typography variant="body2">
-                          {currentViewOrder.price + ".00 lkr"}
+                          {currentViewOrder.packageInfo.budget + ".00 lkr"}
                         </Typography>
                       </ListItem>
 
                       <ListItem
-                        key={currentViewOrder.price}
+                        key={currentViewOrder.packageInfo.budget}
                         sx={{ py: 1, px: 0 }}
                       >
-                        <ListItemText primary={"Quantity"} />
+                        <ListItemText primary={"Number of days"} />
 
                         <Typography variant="body2">
-                          {currentViewOrder.quantity}
+                          {currentViewOrder.packageInfo.numberOfDays}
                         </Typography>
                       </ListItem>
                       <ListItem
-                        key={currentViewOrder.price}
+                        key={currentViewOrder.packageInfo.budget}
                         sx={{ py: 1, px: 0 }}
                       >
                         <ListItemText primary={"Order Status"} />
@@ -232,42 +232,9 @@ function CustomerOrders() {
                           {currentViewOrder.orderStatus}
                         </Typography>
                       </ListItem>
-                      <ListItem
-                        key={currentViewOrder.orderTotal}
-                        sx={{ py: 1, px: 0 }}
-                      >
-                        <ListItemText primary={"Sub Total"} />
-
-                        <Typography variant="body2">
-                          {Number(currentViewOrder.orderTotal) +
-                            Number(
-                              currentViewOrder.checkoutDetails.deliverCost
-                            )}
-                          .00 lkr
-                        </Typography>
-                      </ListItem>
-                      <ListItem
-                        key={currentViewOrder.checkoutDetails.deliverMethod}
-                        sx={{ py: 1, px: 0 }}
-                      >
-                        <ListItemText primary={"Delivery Method"} />
-
-                        <Typography variant="body2">
-                          {currentViewOrder.checkoutDetails.deliverMethod}
-                        </Typography>
-                      </ListItem>
-                      <ListItem
-                        key={currentViewOrder.checkoutDetails.deliverCost}
-                        sx={{ py: 1, px: 0 }}
-                      >
-                        <ListItemText primary={"Delivery Cost"} />
-
-                        <Typography variant="body2">
-                          {currentViewOrder.checkoutDetails.deliverCost}.00 lkr
-                        </Typography>
-                      </ListItem>
                     </List>
-                    <Grid container spacing={2}>
+                  
+                    {/* <Grid container spacing={2}>
                       <Grid item xs={12} sm={6}>
                         <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
                           Shipping
@@ -290,7 +257,7 @@ function CustomerOrders() {
                           {currentViewOrder.checkoutDetails.state}
                         </Typography>
                       </Grid>
-                    </Grid>
+                    </Grid> */}
                   </Grid>
                 </Grid>
                 {orderStatus ? (
@@ -299,7 +266,7 @@ function CustomerOrders() {
                     onClick={() => deleteOrder(currentViewOrder._id)}
                   >
                     <a href="#">
-                      <u>Delete Order</u>
+                      <u>Delete Booking</u>
                     </a>
                   </Typography>
                 ) : (
@@ -317,7 +284,7 @@ function CustomerOrders() {
         />
       </ThemeProvider>
     );
-  } else if (!orders) {
+  } else if (!bookings.bookings) {
     return <div>Loading...</div>;
   } else {
     return (
@@ -325,9 +292,9 @@ function CustomerOrders() {
         <CssBaseline />
 
         <Container>
-          <Header title="Welcome to Herb-City" sections={sections} />
+          <Header title="Welcome to Explore-Ceylon" sections={sections} />
 
-          <h4>My Purchases</h4>
+          <h4>My Bookings</h4>
           <Paper sx={{ width: "100%", overflow: "hidden" }}>
             <TableContainer sx={{ maxHeight: 440 }}>
               <Table stickyHeader aria-label="sticky table">
@@ -345,17 +312,17 @@ function CustomerOrders() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {orders.map((order) => {
+                  {bookings.bookings.map((booking) => {
                     return (
                       <TableRow
                         hover
                         role="checkbox"
                         tabIndex={-1}
-                        key={order.code}
-                        onClick={() => viewOrder(order)}
+                        key={booking._id}
+                        onClick={() => viewOrder(booking)}
                       >
                         {columns.map((column) => {
-                          const value = order[column.id];
+                          const value = booking[column.id];
                           return (
                             <TableCell key={column.id} align={column.align}>
                               {isValidUrl(value) ? (
@@ -379,7 +346,7 @@ function CustomerOrders() {
             <TablePagination
               rowsPerPageOptions={[10, 25, 100]}
               component="div"
-              count={orders.length}
+              count={bookings.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}

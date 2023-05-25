@@ -302,6 +302,21 @@ export default function Packages() {
     if(!accommodations){
       setAccommodations(packages.accommodations);
     }
+    if(!budget){
+      setBudget(packages.budget);
+    }
+    if(!numberOfDays){
+      setNumberOfDays(packages.numberOfDays);
+    }
+    if(!destination){
+      setDestination(packages.destination);
+    }
+    if(!numberOfPeoples){
+      setNumberOfPeoples(packages.numberOfPeoples);
+    }
+    if(!vehicleType){
+      setVehicleType(packages.vehicleType);
+    }
     
 
     setUpdateProgress("block");
@@ -310,8 +325,15 @@ export default function Packages() {
 
     
     if (
-      !packageTitle ||
-      !description
+      !packageTitle || 
+      !description ||
+      !accommodations||
+      !budget||
+      !numberOfDays||
+      !destination||
+      !numberOfPeoples||
+      !vehicleType||
+      !displayPic
     ) {
       Swal.fire({
         icon: "error",
@@ -337,6 +359,16 @@ export default function Packages() {
           "/api/service/update-guide-package",
           {
             _id,
+            guideName,
+            packageTitle,
+            description,
+            budget,
+            numberOfDays,
+            destination,
+            numberOfPeoples,
+            vehicleType,
+            accommodations,
+            displayPic,
           },
           config
         );
@@ -362,7 +394,7 @@ export default function Packages() {
         Swal.fire({
           icon: "error",
           title: "Oops...",
-          text: error.response.data.error,
+          text: error,
         });
       }
     }
@@ -390,7 +422,7 @@ export default function Packages() {
           },
         };
         const { data } = axios.post(
-          SellerServiceBaseUrl + "/shop/deleteProduct",
+          "http://localhost:5000/api/service/delete-guide-package",
           {
             id,
           },
@@ -522,7 +554,7 @@ export default function Packages() {
               onChange={(e)=>setAccommodations(e.target.value)}
             >
               {hotels.hotels.map((option) => (
-                <MenuItem key={option._id} value={option._id}>
+                <MenuItem key={option._id} value={option}>
                   {option.serviceName}
                 </MenuItem>
               ))}
@@ -656,6 +688,8 @@ export default function Packages() {
       <h4>Loading...</h4>
     </div>;
   } else if (packageUpdateState && !addPackageState) {
+    console.log("current");
+    console.log(currentUpdate);
     return (
       <div className="edit_form">
         <input
@@ -739,15 +773,24 @@ export default function Packages() {
             </Grid>
 
             <Grid item xs={12} sm={12}>
-              <TextField
-                required
-                label="Accommodation Name"
-                fullWidth
-                autoComplete="given-name"
-                variant="standard"
-                defaultValue={currentUpdate.accommodations}
-                onChange={(e) => setAccommodations(e.target.value)}
-              />
+
+          <TextField
+              id="outlined-select-currency"
+              select
+              label="Select"
+              fullWidth
+              defaultValue="hello"
+              helperText="Please add accommodation"
+              variant="standard"
+              onChange={(e)=>setAccommodations(e.target.value)}
+            >
+              {hotels.hotels.map((option) => (
+                <MenuItem key={option._id} value={option}>
+                  {option.serviceName}
+                </MenuItem>
+              ))}
+            </TextField>
+
             </Grid>
             <Grid item xs={12}>
               <TextField

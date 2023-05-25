@@ -1,14 +1,16 @@
 const ServiceSupplier = require("../models/ServiceSuppliers");
-const TourPackage = require("../models/TourPackage")
+const TourPackage = require("../models/TourPackage");
 const HotelPackage = require("../models/HotelPackage")
+const TourBooking = require("../models/TourBooking")
 const Admin = require("../models/Admin");
 const asyncHandler = require('express-async-handler');
 const genarateToken = require("../config/genarateToken");
 const { green } = require('colors');
+const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
 
 const getAllHotelPackages = asyncHandler(async(req,res)=>{
 
-    const hotelServices = await HotelPackage.find({ serviceId: { $in: serviceId } });
+    const hotelServices = await HotelPackage.find();
     
         if(hotelServices){
             res.json({
@@ -21,58 +23,140 @@ const getAllHotelPackages = asyncHandler(async(req,res)=>{
         }
 });
 
-const changeServiceStatus = asyncHandler(async(req,res)=>{
-
-    const {serviceId,updateStatus} = req.body;
-    console.log(serviceId,updateStatus);
-
-    if(!serviceId){
-        res.status(400);
-       throw new error("Invalid data passes into backend request!!!");
-   }
-   else{
-       const updateService = await ServiceSupplier.findByIdAndUpdate(serviceId,{
-        serviceStatus:updateStatus,
-       },
-       {
-           new: true,
-       });
+const getAllGuidePackages = asyncHandler(async(req,res)=>{
 
 
-       if(updateService){
-           res.status(201).json({
-            updateService
-           })
+  const guidePackages = await TourPackage.find().sort({budget:-1});
+  
+      if(guidePackages){
+          res.json({
+            guidePackages
+          });
+      }else{
+          console.log("Error fetching Guide Services".red.bold);
+          res.status(401);
+          throw new error("Error fetching Guide Services");
+      }
+});
 
-           console.log(updateService);
-       }else{
-       res.status(400);
-       throw new error("Service not updated !!!");
-   }
-   }
-})
+const checkOut = asyncHandler(async (req, res) => {
+  const { items } = req.body;
+  console.log(items);
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      line_items: items.map((item) => {
+        // const storeItem = storeItems.get(item.id);
+        return {
+          price_data: {
+            currency: "lkr",
+            product_data: {
+              name: item.packageTitle,
+            },
+            unit_amount: item.budget
+              ? Number(item.budget) * 100
+              : Number(item.budget) * 100,
+          },
+          quantity: 1,
+        };
+      }),
 
-const getPackagesByServiceId = asyncHandler(async(req,res)=>{
+      // success_url: `${process.env.CLIENT_URL}/success.html`,
+      // cancel_url: `${process.env.CLIENT_URL}/cancel.html`,
+      success_url: "http://localhost:3000/order/review",
+      cancel_url: "http://localhost:3000/",
+    });
+    res.json({ url: session.url });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+const placeOrder = asyncHandler(async(req,res)=>{
+
+  const {addressInfo,packageInfo} = req.body;
+
+  const fname = addressInfo.fname;
+  const lname = addressInfo.lname;
+  const email = addressInfo.email;
+  const customerPhone = addressInfo.customerPhone;
+  const selectedCity = addressInfo.selectedCity;
+  const selectedState = addressInfo.selectedState;
+  const country = addressInfo.country;
+  const customerId = addressInfo.customerId;
+  const date = addressInfo.date;
+
+  if(!addressInfo || !packageInfo){
+
+    console.log("All data not received".red.bold);
+    res.status(400);
+    throw new error("Please fill all the fields!!!");
+
+}
+
+
+    const booking = await TourBooking.create({
+      fname,
+      lname,
+      email,
+      customerPhone,
+      selectedCity,
+      selectedState,
+      country,
+      customerId,
+      date,
+      packageInfo,
+  });
+
+  if(booking){
+      res.status(201).json({booking});
+  }
+  else{
+      res.status(400);
+      throw new error("Failed to publish package!!!");
+  }
+
+
+});
+
+const searchService = asyncHandler(async (req, res) => {
+  //getting keyword
+  const keyword = req.query.search
+    ? {
+        $or: [
+          { packageTitle: { $regex: req.query.search, $options: "i" } }, //assign keyword find in packageTitle
+          { description: { $regex: req.query.search, $options: "i" } }, //assign keyword find in description
+          { destination: { $regex: req.query.search, $options: "i" } }, //assign keyword find destination
+        ],
+      }
+    : {};
+
+  //find user in databse by keyword
+  const service = await TourPackage.find(keyword);
+  console.log(service);
+  //send data to frontend
+  res.send(service);
+});
+
+
+const getBookingsByUserId = asyncHandler(async(req,res)=>{
 
     console.log("Fetch packages".red.bold);
 
-        const{ serviceId,serviceCode }= req.body;
-        console.log(serviceId,serviceCode);
+        const{ userId }= req.body;
+        console.log(userId);
 
-        var packages = null;
-        if(serviceCode==1){
-            packages = await HotelPackage.find({ serviceId: { $in: serviceId } });
-        }
-        else{
-            packages = await TourPackage.find({ serviceId: { $in: serviceId } })
-        }
+        
+        bookings = await TourBooking.find({ customerId: { $in: userId } })
+        
     
     
-        if(packages){
+        if(bookings){
             res.json({
-                packages
+              bookings
             });
-            console.log(packages);
+            console.log(bookings);
         }else{
             console.log("Error fetching packages".red.bold);
             res.status(401);
@@ -80,82 +164,5 @@ const getPackagesByServiceId = asyncHandler(async(req,res)=>{
         }
 })
 
-//user authenticate
-const authAdmin = asyncHandler(async (req, res) => {
-  
-    //getting body data
-    const { userName, password } = req.body;
-  
-    console.log(userName,password);
-    //check if user available in database
-    const admin = await Admin.findOne({ userName });
-    if(!userName){
-      return res.status(400).send({ message: "Invalid User Name" });
-    }
-    if (!(await admin.matchPassword(password)))
-      return res.status(400).send({ message: "Incorrect Password " });
-  
-  
-    //if user available send response with matching password and genarate JWT token using user id
-    if (admin && (await admin.matchPassword(password))) {
-      res.status(200).json({
-        userName: admin.userName,
-        token: genarateToken(admin._id),
-      });
-    } else {
-      //send error message to frontend
-      console.log("Invalid user name or Password".red.bold);
-      res.status(400).json({
-        error: "Incorrect password !!!",
-      });
-      throw new error("Incorrect password !!!");
-    }
-  });
 
-const addAdmin = asyncHandler(async (req, res) => {
-    //getting body data
-    const { userName, password} = req.body;
-  
-    //backend validation for body data
-    if (!userName || !password) {
-      res.send(400);
-      throw new error("Please enter all the fields!!!");
-    }
-  
-    //find if user exist with email and user name
-    const adminExist = await Admin.findOne({ userName });
-  
-    //sending error message if user exist
-    if (adminExist) {
-      console.log("Admin already exist!!!".red.bold);
-      res.status(400).json({
-        error: "Admin already exist !!!",
-      });
-      throw new error("Admin already exist!!!");
-    }
-  
-    //create new user in database
-    const admin = await Admin.create({
-      userName,
-      password,
-    });
-  
-    //send response to frontend
-    if (admin) {
-      console.log("Registered!!!".green.bold);
-      res.status(201).json({
-        _id: admin._id,
-        userName: admin.userName,
-        token: genarateToken(admin._id),
-      });
-    } else {
-      //send error message to frontend
-      console.log("Failed to Register Admin !!!".red.bold);
-      res.status(400).json({
-        error: "Failed to Register Admin !!!",
-      });
-      throw new error("Failed to Register Admin !!!");
-    }
-  });
-
-module.exports = {getAllHotelPackages}
+module.exports = {getAllHotelPackages,getAllGuidePackages,checkOut,placeOrder,searchService,getBookingsByUserId}

@@ -17,7 +17,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Grid from "@mui/material/Grid";
 import ReadMoreIcon from "@mui/icons-material/ReadMore";
 import { useState, useEffect } from "react";
-import ProductView from "./ProductView";
+import ProductView from "./GuidePackageView";
 import { useHistory } from "react-router-dom";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
@@ -28,26 +28,26 @@ import InfoIcon from "@mui/icons-material/Info";
 export default function Products(props) {
 
   const history = useHistory();
-  const { product } = props;
+  const { service } = props;
 
   const toProductView = () => {
    
     history.push({
-      pathname: "/product/view",
+      pathname: "/package/view",
       state: {
-        data: product,
+        data: service,
       },
     });
   };
 
     return (
-      <Grid item xs={12} md={4}>
+      <Grid item xs={12} md={4} sx={{mt:'20px'}}>
 
         <Card sx={{ maxWidth: 345 }}>
           <CardMedia
             component="img"
             height="194"
-            image={product.pic}
+            image={service.displayPic}
             alt="Paella dish"
             onClick={toProductView}
           />
@@ -58,9 +58,9 @@ export default function Products(props) {
               color="text.secondary"
               sx={{ textAlign: "left", display: "flex" }}
             >
-              {product.productTitle.length <= 35
-                ? product.productTitle
-                : product.productTitle.substr(0, 35) + "..."}
+              {service.packageTitle.length <= 35
+                ? service.packageTitle
+                : service.packageTitle.substr(0, 35) + "..."}
             </Typography>
 
             <br></br>
@@ -69,7 +69,7 @@ export default function Products(props) {
               color="text.secondary"
               sx={{ textAlign: "left", display: "flex" }}
             >
-              MRP : {product.price}.00 lkr
+              MRP : {service.budget}.00 lkr
             </Typography>
 
             <Typography
@@ -77,7 +77,7 @@ export default function Products(props) {
               color="text.secondary"
               sx={{ textAlign: "match-parent", display: "flex" }}
             >
-              Available Stock : {product.stock}
+              Destination : {service.destination}
             </Typography>
           </CardContent>
 
@@ -93,7 +93,7 @@ export default function Products(props) {
                 onClick={toProductView}
               >
 
-                View Product
+                View Package
                 
               </Button>
 

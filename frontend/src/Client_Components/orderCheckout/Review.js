@@ -29,8 +29,8 @@ const theme = createTheme();
 
 const sections = [
   { title: "Home", url: "/" },
-  { title: "Cart", url: "/cart" },
-  { title: "Orders", url: "/orders" },
+  { title: "Tour Bookings", url: "/bookings" },
+  { title: "Hotel Bookings", url: "/hotel-bookings" },
 ];
 
 export default function Review(props) {
@@ -40,10 +40,12 @@ export default function Review(props) {
   const [addressInfo, setAddressInfo] = useState();
   const [itemsInfo, setItemsInfo] = useState();
   const [total, setTotal] = useState();
+  const [packageInfo, setPackageInfo] = useState();
 
   useEffect(() => {
-    setItemsInfo(JSON.parse(localStorage.getItem("itemsInfo")));
-    setAddressInfo(JSON.parse(localStorage.getItem("addressInfo")));
+    // setItemsInfo(JSON.parse(localStorage.getItem("bookingInfo")));
+    setAddressInfo(JSON.parse(localStorage.getItem("bookingInfo")));
+    setPackageInfo(JSON.parse(localStorage.getItem("packageInfo")));
 
   }, [])
 
@@ -52,28 +54,16 @@ export default function Review(props) {
   if (!addressInfo && !itemsInfo) {
     return <h3>Loading...</h3>;
   } else {
-    // console.log(addressInfo);
-    // console.log(itemsInfo);
-
-    for (let i = 0; i < itemsInfo.length; i++) {
-      itemsInfo[i].checkoutDetails = addressInfo;
-
-      if(!itemsInfo[i].customerId){
-         itemsInfo[i].customerId =userId;
-      }
-      // itemsInfo[i].orderTotal = itemsInfo[i].quantity * itemsInfo[i].productPrice;
-    }
-    console.log("Finallllllllllllllllllllllllllllll");
-    console.log(itemsInfo);
+  
 
     const MakeOrder = async (url) => {
 
 
-      if (!itemsInfo) {
+      if (!packageInfo) {
         Swal.fire({
           icon: "error",
           title: "Oops...",
-          text: "Null Object",
+          text: "Null Object of package info",
           footer: '<a href="">Why do I have this issue?</a>',
         });
       } else {
@@ -86,15 +76,16 @@ export default function Review(props) {
           const { data } = await axios.post(
             "http://localhost:5000/api/user/placeOrder",
             {
-              itemsInfo,
+              addressInfo,
+              packageInfo,
             },
             config
           );
           console.log(data);
           Swal.fire({
             icon: "success",
-            title: "Thank you for shopping with Herb-City",
-            text: "Order confirmed",
+            title: "Thank you for Exploring Sri Lanka",
+            text: "Booking confirmed",
           }).then((result) => {
             if (result.isConfirmed) {
               window.location = "http://localhost:3000/";
@@ -105,7 +96,7 @@ export default function Review(props) {
 
           Swal.fire({
             icon: "error",
-            title: "Failed to placing orderrrr",
+            title: "Failed to booking",
             text: error.response.data.error,
           });
         }
@@ -117,7 +108,7 @@ export default function Review(props) {
         <CssBaseline />
 
         <Container>
-          <Header title="Herb-City Checkout" sections={sections} />
+          <Header title="Explore-Ceylon Checkout" sections={sections} />
         </Container>
 
         <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
@@ -130,46 +121,41 @@ export default function Review(props) {
             </Typography>
             <React.Fragment>
               <Typography variant="h6" gutterBottom>
-                Confirm Order
+                Confirm Booking
               </Typography>
 
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={12}>
                   <Typography variant="h6" gutterBottom>
-                    Order summary
+                    Booking summary
                   </Typography>
                   <List disablePadding>
-                    {itemsInfo.map((item) => (
-                      <ListItem key={item.productTitle} sx={{ py: 1, px: 0 }}>
+
+                      <ListItem sx={{ py: 1, px: 0 }}>
                         <ListItemText
                           primary={
-                            item.productTitle.length <= 35
-                              ? item.productTitle
-                              : item.productTitle.substr(0, 19) + "..."
+                            packageInfo.packageTitle.length <= 35
+                              ? packageInfo.packageTitle
+                              : packageInfo.packageTitle.substr(0, 19) + "..."
                           }
                           secondary={
-                            "Ship  by : " + item.checkoutDetails.deliverMethod
+                            "Destination : " + packageInfo.destination
                           }
                         />
                         <Typography variant="body2">
-                          {item.orderTotal + ".00 lkr"}
+                          {packageInfo.budget + ".00 lkr"}
                         </Typography>
                       </ListItem>
-                    ))}
 
-                    {/* <ListItem sx={{ py: 1, px: 0 }}>
-                      <ListItemText primary="Total" />
-                      <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                      </Typography>
-                    </ListItem> */}
+                  
                   </List>
 
                   <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                       <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-                        Shipping
+                        Thank you
                       </Typography>
-                      <Typography gutterBottom>
+                      {/* <Typography gutterBottom>
                         {itemsInfo[0].checkoutDetails.fname +
                           " " +
                           itemsInfo[0].checkoutDetails.lname}
@@ -185,7 +171,7 @@ export default function Review(props) {
                       </Typography>
                       <Typography gutterBottom>
                         {itemsInfo[0].checkoutDetails.state}
-                      </Typography>
+                      </Typography> */}
                     </Grid>
                     <Grid item container direction="column" xs={12} sm={6}>
                       <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>

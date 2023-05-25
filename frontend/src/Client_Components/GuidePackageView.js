@@ -4,10 +4,9 @@ import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Header from "../Navigation/Header";
-import MainFeaturedPost from "../Client_Components/MainFeaturedPost";
-import FeaturedPost from "../Client_Components/FeaturedPost";
-import Footer from "../Client_Components/Footer";
-import Products from "../Client_Components/Products";
+import MainFeaturedPost from "./MainFeaturedPost";
+import FeaturedPost from "./FeaturedPost";
+import Footer from "./Footer";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { Avatar } from "@mui/material";
@@ -26,8 +25,8 @@ import MuiAlert from "@mui/material/Alert";
 
 const sections = [
   { title: "Home", url: "/" },
-  { title: "Cart", url: "/cart" },
-  { title: "Orders", url: "/orders" },
+  { title: "TourBookings", url: "/bookings" },
+  { title: "Hotel Bookings", url: "/hotel-bookings" },
 ];
 
 const theme = createTheme();
@@ -44,14 +43,7 @@ function ProductView(props) {
   const { userId, actor } = useAuth();
   const { user } = useUser();
 
-  const [quantity, setQuantity] = useState();
 
-  const [productImage, setProductImage] = useState(data.pic);
-  const [productTitle, setProductTitle] = useState(data.productTitle);
-  const [productId, setProductId] = useState(data._id);
-  const [shopId, setShopId] = useState(data.shopId);
-  const [productPrice, setProductPrice] = useState(data.price);
-  const [customerId, setCustomerId] = useState(user ? userId : null);
 
   const [updateOpen, setUpdateOpen] = React.useState(false);
   const [updateFailOpen, setUpdateFailOpen] = React.useState(false);
@@ -61,45 +53,15 @@ function ProductView(props) {
   );
 
   const checkOut = () => {
-    var isSuccess = true;
-    if (!quantity) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Please enter quantity",
-        footer: '<a href="">Why do I have this issue?</a>',
-      });
-      isSuccess = false;
-    }
-    if (quantity <= 0) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Quantity must greater than 0",
-        footer: '<a href="">Why do I have this issue?</a>',
-      });
-      isSuccess = false;
-    }
-    if (quantity > Number(data.stock)) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Item stock is not enough",
-        footer: '<a href="">Why do I have this issue?</a>',
-      });
-      isSuccess = false;
-    }
 
-    if (isSuccess) {
-      data.quantity = quantity;
       console.log(data);
       history.push({
-        pathname: "/product/checkout",
+        pathname: "/package/booking",
         state: {
-          data: [data],
+          data: data,
         },
       });
-    }
+    
   };
 
   const Alert = React.forwardRef(function Alert(props, ref) {
@@ -115,59 +77,59 @@ function ProductView(props) {
   };
 
   const addWishlist = async () => {
-    setProductId(data._id);
-    setProductImage(data.pic);
-    setProductPrice(data.price);
-    setProductTitle(data.productTitle);
-    setCustomerId(user ? userId : null);
-    setQuantity(quantity);
-    setShopId(data.shopId);
+    // setProductId(data._id);
+    // setProductImage(data.pic);
+    // setProductPrice(data.price);
+    // setProductTitle(data.productTitle);
+    // setCustomerId(user ? userId : null);
+    // setQuantity(quantity);
+    // setShopId(data.shopId);
 
-    if (
-      !productImage ||
-      !productTitle ||
-      !productPrice ||
-      !productId ||
-      !shopId ||
-      !customerId ||
-      !quantity
-    ) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Please enter quantity",
-        footer: '<a href="">Why do I have this issue?</a>',
-      });
-    } else {
-      try {
-        const config = {
-          headers: {
-            "Content-type": "application/json",
-          },
-        };
-        const { data } = await axios.post(
-          UserCartServiceBaseUrl + "/cart/addCart",
-          {
-            productId,
-            productImage,
-            productPrice,
-            productTitle,
-            customerId,
-            shopId,
-            quantity,
-          },
-          config
-        );
-        console.log(data);
-        setUpdateOpen(true);
-        setCartAdded(true);
-        setWishListAdded("Added to wishlist");
-      } catch (error) {
-        console.log(error.response.data.error);
-        setUpdateFailOpen(true);
-        setCartAdded(false);
-      }
-    }
+    // if (
+    //   !productImage ||
+    //   !productTitle ||
+    //   !productPrice ||
+    //   !productId ||
+    //   !shopId ||
+    //   !customerId ||
+    //   !quantity
+    // ) {
+    //   Swal.fire({
+    //     icon: "error",
+    //     title: "Oops...",
+    //     text: "Please enter quantity",
+    //     footer: '<a href="">Why do I have this issue?</a>',
+    //   });
+    // } else {
+    //   try {
+    //     const config = {
+    //       headers: {
+    //         "Content-type": "application/json",
+    //       },
+    //     };
+    //     const { data } = await axios.post(
+    //       UserCartServiceBaseUrl + "/cart/addCart",
+    //       {
+    //         productId,
+    //         productImage,
+    //         productPrice,
+    //         productTitle,
+    //         customerId,
+    //         shopId,
+    //         quantity,
+    //       },
+    //       config
+    //     );
+    //     console.log(data);
+    //     setUpdateOpen(true);
+    //     setCartAdded(true);
+    //     setWishListAdded("Added to wishlist");
+    //   } catch (error) {
+    //     console.log(error.response.data.error);
+    //     setUpdateFailOpen(true);
+    //     setCartAdded(false);
+    //   }
+    // }
   };
 
   return (
@@ -175,7 +137,7 @@ function ProductView(props) {
       <CssBaseline />
 
       <Container>
-        <Header title="Welcome to Herb-City" sections={sections} />
+        <Header title="Welcome to Explore-Ceylon" sections={sections} />
 
         <Grid
           container
@@ -184,7 +146,7 @@ function ProductView(props) {
         >
           <Grid item md={5}>
             <Avatar
-              src={data.pic ? data.pic : null}
+              src={data.displayPic ? data.displayPic : null}
               sx={{ width: "400px", height: "400px", marginLeft: "30px" }}
               variant="square"
             ></Avatar>
@@ -192,12 +154,8 @@ function ProductView(props) {
 
           <Grid item md={7}>
             <h3 style={{ textAlign: "left", display: "flex" }}>
-              {data.productTitle}
+              {data.packageTitle}
             </h3>
-
-            <p style={{ textAlign: "left", display: "flex" }}>
-              Category : {data.categoryName}
-            </p>
 
             <h5 style={{ textAlign: "left", display: "flex" }}>
               <u>Description</u>
@@ -206,23 +164,23 @@ function ProductView(props) {
             <p style={{ display: "flex" }}>{data.description}</p>
 
             <h5 style={{ textAlign: "left", display: "flex" }}>
-              MRP : {data.price}.00 lkr
+              MRP : {data.budget}.00 lkr
             </h5>
             <h5 style={{ textAlign: "left", display: "flex" }}>
-              Stock : {data.stock} pcs
+              Duration : {data.numberOfDays} days
             </h5>
-
-            <TextField
-              id="standard-number"
-              label="Quantity"
-              type="number"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              variant="standard"
-              sx={{ marginRight: "500px" }}
-              onChange={(e) => setQuantity(e.target.value)}
-            />
+            <h5 style={{ textAlign: "left", display: "flex" }}>
+              Destination : {data.destination}
+            </h5>
+            <h5 style={{ textAlign: "left", display: "flex" }}>
+              Maximum Members : {data.numberOfPeoples} persons
+            </h5>
+            <h5 style={{ textAlign: "left", display: "flex" }}>
+              Vehicle Type : {data.vehicleType}
+            </h5>
+            <h5 style={{ textAlign: "left", display: "flex" }}>
+              Accomodation :  <a href="#">{data.accommodations.serviceName} {data.accommodations.serviceLocation}</a>
+            </h5>
 
             <Grid container spacing={2} sx={{ marginTop: "80px" }}>
               <Snackbar
@@ -253,14 +211,14 @@ function ProductView(props) {
                 </Alert>
               </Snackbar>
               <Grid item xs={6}>
-                <Tooltip title="to check out" placement="top-end">
+                <Tooltip title="Book package" placement="top-end">
                   <Button
                     variant="contained"
                     color="success"
                     onClick={checkOut}
                     sx={{ width: "100%" }}
                   >
-                    Buy
+                    Get Explore
                     <LocalMallIcon />
                   </Button>
                 </Tooltip>
@@ -282,10 +240,7 @@ function ProductView(props) {
         </Grid>
       </Container>
 
-      <Footer
-        title="Footer"
-        description="Something here to give the footer a purpose!"
-      />
+      <Footer/>
     </ThemeProvider>
   );
 }

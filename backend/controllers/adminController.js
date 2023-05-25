@@ -115,6 +115,7 @@ const authAdmin = asyncHandler(async (req, res) => {
 const addAdmin = asyncHandler(async (req, res) => {
     //getting body data
     const { userName, password} = req.body;
+    console.log(userName,password);
   
     //backend validation for body data
     if (!userName || !password) {

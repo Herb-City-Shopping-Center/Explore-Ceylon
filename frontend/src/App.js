@@ -17,12 +17,11 @@ import {
 import GuideBookings from "./Guide_Components/GuideBookings";
 import SellerShop from './Guide_Components/SellerShop';
 import GuidePackages from './Guide_Components/GuidePackages';
-import ProductView from "./Client_Components/ProductView";
+import ProductView from "./Client_Components/GuidePackageView";
 import Checkout from './Client_Components/orderCheckout/Checkout';
 import Stripe from "./Client_Components/orderCheckout/Stripe";
 import PaymentForm from "./Client_Components/orderCheckout/PaymentForm";
 import Review from "./Client_Components/orderCheckout/Review";
-import Cart from "./Client_Components/Cart";
 import CustomerOrders from "./Client_Components/CustomerOrders";
 import GuideAndHotelMng from './Admin_Components/GuideAndHotelMng';
 import AdminOrders from './Admin_Components/TouristBookings';
@@ -35,14 +34,14 @@ function App() {
   return (
     <div className="App">
       <ClerkProvider publishableKey={clerkPubKey}>
-        <Route path="/" component={HomePage} exact />
-        <Route path="/product/view" component={ProductView} exact />
+        <Route path="/" component={HomePage} exact />  
+        <Route path="/package/view" component={ProductView} exact />
 
         <SignedIn>
-          <Route path="/product/checkout" component={Checkout} exact />
-          <Route path="/cart" component={Cart} exact />
-          <Route path="/orders" component={CustomerOrders} exact />
+          <Route path="/package/booking" component={Checkout} exact />
+          <Route path="/bookings" component={CustomerOrders} exact />
           <Route path="/order/review" component={Review} exact />
+          {/* <Route path="/hotel-bookings" component={} exact /> */}
 
           <Route path="/guide/dashboard" component={ServiceSupplierDashboard} exact />
           <Route path="/guide/bookings" component={GuideBookings} exact />

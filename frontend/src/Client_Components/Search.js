@@ -34,7 +34,7 @@ function Search() {
         },
       };
       const { data } = await axios.get(
-        UserServiceBaseUrl + `/user/searchProduct?search=${search}`,
+        `/api/user/searchService?search=${search}`,
         config
       );
       setSearchResult(data);
@@ -45,12 +45,12 @@ function Search() {
     }
   };
 
-    const productPage = (product) => {
+    const productPage = (data) => {
 
     history.push({
-      pathname: "/product/view",
+      pathname: "/package/view",
       state: {
-        data: product,
+        data: data,
       },
     });
   };
@@ -111,11 +111,11 @@ function Search() {
                         key={product._id}
                       >
                         <ListItemAvatar>
-                          <Avatar alt="S" src={product.pic} />
+                          <Avatar alt="S" src={product.displayPic} />
                         </ListItemAvatar>
                         <ListItemText
-                          primary={product.productTitle}
-                          secondary={product.categoryName}
+                          primary={product.packageTitle}
+                          secondary={product.packageStatus}
                           sx={{ marginTop: "5px" }}
                         />
                       </ListItem>

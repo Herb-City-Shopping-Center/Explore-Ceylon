@@ -42,6 +42,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Rating from '@mui/material/Rating';
 import ClearIcon from "@mui/icons-material/Clear";
 import TourPackage from "./TourPackage";
+import Chip from '@mui/material/Chip';
 import HotelPackage from "./HotelPackage";
 
 
@@ -607,8 +608,15 @@ function AdminSellers() {
                                   src={value}
                                   sx={{ width: "80px", height: "80px" }}
                                 ></Avatar>
-                              ) : (
+                              ) : (column.id==="serviceStatus" && value===0?(
+                                <Chip label="Blocked" color="error" variant="outlined" />
+                              ):(column.id==="serviceStatus" && value===1?(
+                                <Chip label="Active" color="success" />
+                              ):(
                                 value
+                              )
+                              )
+
                               )}
                             </TableCell>
                           );

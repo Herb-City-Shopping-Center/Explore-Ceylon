@@ -24,13 +24,16 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { useAuth,useUser } from "@clerk/clerk-react";
 import Autocomplete from "@mui/material/Autocomplete";
+import { State, City,Country } from 'country-state-city';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 
 
 const sections = [
   { title: "Home", url: "/" },
-  { title: "Cart", url: "/cart" },
-  { title: "Orders", url: "/orders" },
+  { title: "Tour Bookings", url: "/bookings" },
+  { title: "Hotel Bookings", url: "/hotel-bookings" },
 ];
 
 const deliveryMethods = [
@@ -44,8 +47,8 @@ const deliveryMethods = [
 const theme = createTheme();
 
 
-const CheckoutServiceBaseUrl =
-  process.env.REACT_APP_USER_CHECKOUT_SERVICE_BASE_URL;
+const BaseUrl =
+  process.env.BASE_URL;
 
 export default function Checkout(props) {
 
@@ -59,24 +62,26 @@ export default function Checkout(props) {
 
   const [fname, setFname] = useState(null);
   const [lname, setLname] = useState(null);
-  const [addressLine1, setAddressLine1] = useState(null);
-  const [addressLine2, setAddressLine2] = useState(null);
-  const [city, setCity] = useState(null);
-  const [state, setState] = useState(null);
-  const [zip, setZip] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [customerPhone, setCustomerPhone] = useState(null);
+  const [pickupLocation, setPickupLocation] = useState(null);
+  const [date, setDate] = useState(new Date());
   const [country, setCountry] = useState(null);
   const [customerId, setCustomerId] = useState(user?userId:null);
-  const [deliveryMethod, setDeliveryMethod] = useState();
+  const [countryCode, setCountryCode] = useState("SL");
+  const [selectedState, setSelectedState] = useState();
+  const [selectedCity, setSelectedCity] = useState();
 
 
   const back =()=>{
      history.push({
-       pathname: "/product/view",
+       pathname: "/package/view",
        state: {
          data: data,
        },
      });
   }
+
 
   const toPayment = async()=>{
 
@@ -85,65 +90,28 @@ export default function Checkout(props) {
 
     
 
-    const deliverMethod = deliveryMethod.code;
-
-    var isSuccess = true;
-
-    var deliverCost=0;
-    for (let i = 0; i < data.length; i++) {
-        deliverCost =Number(data[i].quantity) * Number(deliveryMethod.cost);
-
-        data[i].orderTotal =Number(data[i].quantity) * Number(data[i].price);
-
-        if (data[i]._id){
-          data[i].productId = data[i]._id;
-          delete data[i]._id;
-        } 
-
-        if(data[i].productImage){
-          data[i].pic = data[i].productImage;
-          delete data[i].productImage;
-        }
-        if (data[i].productPrice) {
-          data[i].orderTotal=0;
-          data[i].price = data[i].productPrice;
-          delete data[i].productPrice;
-          data[i].orderTotal = Number(data[i].quantity) * Number(data[i].price);
-        }
-        
-
-    } 
-    console.log("-----------------------------------------------------");
-    console.log(deliverCost);
-    console.log("-----------------------------------------------------");
-
-    const addressInfo = {
+    const bookingInfo = {
       fname: fname,
       lname: lname,
-      addressLine1: addressLine1,
-      addressLine2: addressLine2,
-      city: city,
-      state: state,
-      zip: zip,
+      email: email,
+      customerPhone: customerPhone,
+      selectedCity: selectedCity,
+      selectedState: selectedState,
       country: country,
       customerId: customerId,
-      deliverMethod: deliverMethod,
-      deliverCost: deliverCost,
+      date: date
     };
 
     if (
-      !fname ||
-      !lname ||
-      !addressLine1 ||
-      !addressLine2 ||
-      !city ||
-      !state ||
-      !zip ||
-      !country ||
-      !deliveryMethod ||
-      !deliverMethod ||
-      !deliverCost ||
-      !isSuccess
+      !fname||
+      !lname||
+      !email||
+      !customerPhone||
+      !selectedCity||
+      !selectedState||
+      !country||
+      !customerId||
+      !date
     ) {
       Swal.fire({
         icon: "error",
@@ -152,17 +120,16 @@ export default function Checkout(props) {
         footer: '<a href="">Why do I have this issue?</a>',
       });
     } else {
-      localStorage.setItem("addressInfo", JSON.stringify(addressInfo));
-      localStorage.setItem("itemsInfo", JSON.stringify(data));
-      //setUser(JSON.parse(localStorage.getItem("userInfo")));
+      localStorage.setItem("bookingInfo", JSON.stringify(bookingInfo));
+      localStorage.setItem("packageInfo", JSON.stringify(data));
 
-      fetch(CheckoutServiceBaseUrl+"/payment/create-checkout-session", {
+      fetch("/api/user/payment/create-checkout-session", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          items: data,
+          items: [data],
         }),
       })
         .then((res) => {
@@ -185,7 +152,7 @@ export default function Checkout(props) {
       <CssBaseline />
 
       <Container>
-        <Header title="Herb-City Checkout" sections={sections} />
+        <Header title="Explore-Ceylon Checkout" sections={sections} />
       </Container>
 
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
@@ -198,7 +165,7 @@ export default function Checkout(props) {
           </Typography>
           <React.Fragment>
             <Typography variant="h6" gutterBottom>
-              Shipping address
+              Booking Form
             </Typography>
 
             <Grid container spacing={3}>
@@ -229,94 +196,76 @@ export default function Checkout(props) {
               <Grid item xs={12}>
                 <TextField
                   required
-                  id="address1"
-                  name="address1"
-                  label="Address line 1"
+                  id="email"
+                  name="email"
+                  label="Email"
                   fullWidth
-                  autoComplete="shipping address-line1"
+                  autoComplete="email"
                   variant="standard"
-                  onChange={(e) => setAddressLine1(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  id="address2"
-                  name="address2"
-                  label="Address line 2"
-                  fullWidth
-                  autoComplete="shipping address-line2"
-                  variant="standard"
-                  onChange={(e) => setAddressLine2(e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
                   required
-                  id="city"
-                  name="city"
-                  label="City"
+                  id="address1"
+                  name="address1"
+                  label="Contact"
                   fullWidth
-                  autoComplete="shipping address-level2"
+                  autoComplete="shipping address-line1"
                   variant="standard"
-                  onChange={(e) => setCity(e.target.value)}
+                  onChange={(e) => setCustomerPhone(e.target.value)}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  id="state"
-                  name="state"
-                  label="State/Province/Region"
+              <Grid item xs={12}>
+                Pickup Location
+              <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
                   fullWidth
-                  onChange={(e) => setState(e.target.value)}
-                  variant="standard"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  id="zip"
-                  name="zip"
-                  label="Zip / Postal code"
-                  fullWidth
-                  onChange={(e) => setZip(e.target.value)}
-                  autoComplete="shipping postal-code"
-                  variant="standard"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  id="country"
-                  name="country"
-                  label="Country"
-                  onChange={(e) => setCountry(e.target.value)}
-                  fullWidth
-                  autoComplete="shipping country"
-                  variant="standard"
-                />
-              </Grid>
-              <Grid item xs={12} sm={12}>
-
-                <Autocomplete
-                  id="clear-on-escape"
-                  options={deliveryMethods}
-                  clearOnEscape
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Select Delivery Service"
-                      variant="standard"
-                    />
-                  )}
+                  options={State.getStatesOfCountry(countryCode).map((option) => option.name)}
                   onChange={(event, newValue) => {
-                    setDeliveryMethod(newValue);
+                    console.log(newValue);
+                    setSelectedState(newValue);
                   }}
+                  renderInput={(params) => <TextField {...params} label="State" />}
                 />
-                
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  fullWidth
+                  options={City.getCitiesOfState(countryCode, "E").map((option) => option.name)}
+                  sx={{mt:2}}
+                  onChange={(event, newValue) => {
+                    console.log(newValue);
+                    setSelectedCity(newValue);
+                  }}
+                  renderInput={(params) => <TextField {...params} label="City" />}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+              <p>Select Date</p>
+              <DatePicker selected={date} onChange={(date) => setDate(date)} />
+
+              </Grid>
+              <Grid item xs={12} sm={6}>
+              <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  fullWidth
+                  options={Country.getAllCountries().map((option) => option.name)}
+                  sx={{mt:2}}
+                  onChange={(event, newValue) => {
+                    console.log(newValue);
+                    setCountry(newValue);
+                  }}
+                  renderInput={(params) => <TextField {...params} label="Origin Country" />}
+                />
               </Grid>
             </Grid>
 
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+
               <Button sx={{ mt: 3, ml: 1 }} onClick={back}>
                 Back
               </Button>

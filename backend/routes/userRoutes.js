@@ -1,10 +1,15 @@
 const express = require('express');
 const router = express.Router();
 
-const {getAllHotelPackages} = require('../controllers/userController')
+const {getAllHotelPackages,getAllGuidePackages,checkOut,placeOrder,searchService,getBookingsByUserId} = require('../controllers/userController')
 
 
-router.route("/getAllHotelPackages").post(getAllHotelPackages);
+router.route("/get-all-hotel-packages").post(getAllHotelPackages);
+router.route("/get-all-guide-packages").post(getAllGuidePackages);
+router.route("/payment/create-checkout-session").post(checkOut);
+router.route("/placeOrder").post(placeOrder);
+router.route("/searchService").get(searchService);
+router.route("/getBookingsByUserId").post(getBookingsByUserId);
 
 
 module.exports = router;

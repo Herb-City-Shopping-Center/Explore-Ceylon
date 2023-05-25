@@ -7,7 +7,7 @@ import Header from "../Navigation/Header";
 import MainFeaturedPost from "../Client_Components/MainFeaturedPost";
 import FeaturedPost from "../Client_Components/FeaturedPost";
 import Footer from "../Client_Components/Footer";
-import Products from "../Client_Components/Products";
+import Products from "../Client_Components/GuidePackages";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Swal from "sweetalert2";
@@ -17,8 +17,8 @@ import Devider from "@mui/material/Divider";
 
 const sections = [
   { title: "Home", url: "/" },
-  { title: "Cart", url: "/cart" },
-  { title: "Orders", url: "/orders" },
+  { title: "Tour Bookings", url: "/bookings" },
+  { title: "Hotel Bookings", url: "/hotel-bookings" },
 ];
 
 const mainFeaturedPost = {
@@ -34,8 +34,9 @@ const mainFeaturedPost = {
 const theme = createTheme();
 
 
-export default function Blog() {
-  const [products, setProducts] = useState([]);
+export default function HomePage() {
+  const [hotelServices, setHotelServices] = useState([]);
+  const [guidePackages, setGuidePackages] = useState([]);
 
   const getAllHotelPackages = async () => {
     console.log("------------------------------");
@@ -48,21 +49,42 @@ export default function Blog() {
         },
       };
       const { data } = await axios.post(
-        "/api/user/getAllHotelPackages",
+        "http://localhost:5000/api/user/get-all-hotel-packages",
         {},
         config
       );
 
-      setProducts(data);
+      setHotelServices(data);
       console.log(data);
     } catch (error) {
       console.log(error.response.data.error);
     }
   };
 
-  // useEffect(() => {
-  //   getAllProducts();
-  // }, []);
+  const getAllGuidePackages = async () => {
+    try {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
+      const { data } = await axios.post(
+        "http://localhost:5000/api/user/get-all-guide-packages",
+        {},
+        config
+      );
+
+      setGuidePackages(data);
+      console.log(data);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+    getAllHotelPackages();
+    getAllGuidePackages();
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -93,20 +115,23 @@ export default function Blog() {
           </Toolbar>
 
             <Devider/>
+            <h4>Hotel Packages</h4>
           <Grid container spacing={4} sx={{minHeight:"10vh"}}>
-            {products.Products ? (
-              products.Products.map((product) => (
-                <Products key={product.productTitle} product={product} />
+            {hotelServices.length>0 ? (
+              hotelServices.hotelServices.map((service) => (
+                <></>
+                // <Products key={service._id} product={service} />
               ))
             ) : (
               <div>Loading...</div>
             )}
           </Grid>
           <Devider/>
+          <h4>Tour Packages</h4>
           <Grid container spacing={4} sx={{minHeight:"10vh"}}>
-            {products.Products ? (
-              products.Products.map((product) => (
-                <Products key={product.productTitle} product={product} />
+            {guidePackages.guidePackages ? (
+              guidePackages.guidePackages.map((guidePackage) => (
+                <Products key={guidePackage._id} service={guidePackage} />
               ))
             ) : (
               <div>Loading...</div>

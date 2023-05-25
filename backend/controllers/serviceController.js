@@ -127,73 +127,91 @@ const addGuidePackage = asyncHandler( async(req,res)=>{
             
 });
 
-// const deleteShop = asyncHandler(async(req,res)=>{
+const deleteGuidePackage = asyncHandler(async(req,res)=>{
 
-//     const {shopId}=req.body;
-//     console.log(shopId);
-//     if(!shopId){
-//         console.log('Invalid data passes into backend request');
-//         return res.sendStatus(400);
-//     }else{
+    const {id}=req.body;
+    console.log(id);
+    if(!id){
+        console.log('Invalid data passes into backend request');
+        return res.sendStatus(400);
+    }else{
 
-//     try {
+    try {
 
-//         const shop = await Shop.findOneAndDelete({_id:shopId});
+        const package = await TourPackage.findOneAndDelete({_id:id});
 
-//         if(shop){
-//             res.status(201).json({
-//                 shopId:shopId
-//             })
-//             console.log('Shop deleted');
-//         }
+        if(package){
+            res.status(201).json({
+                packageId:id
+            })
+            console.log('Package deleted');
+        }
         
-//     } catch (error) {
-//         res.status(400);
-//         throw new error("Error while deleting shop !!!"+error.message);
-//     }
-// }
+    } catch (error) {
+        res.status(400);
+        throw new error("Error while deleting package !!!"+error.message);
+    }
+}
 
-// })
+})
 
 const updateGuidePackage = asyncHandler(async(req,res)=>{
 
-    const{shopId,shopName,shopAddress,shopDescription,shopProvince,shopLogo}=req.body;
-    console.log(shopId+shopName+shopAddress+shopDescription+shopProvince);
+    const{_id,
+        guideName,
+        packageTitle,
+        description,
+        budget,
+        numberOfDays,
+        destination,
+        numberOfPeoples,
+        vehicleType,
+        accommodations,
+        displayPic,}=req.body;
 
-    if(!shopName ||!shopAddress || !shopDescription || !shopProvince || !shopId){
+    console.log(_id,
+        guideName,
+        packageTitle,
+        description,
+        budget,
+        numberOfDays,
+        destination,
+        numberOfPeoples,
+        vehicleType,
+        accommodations,
+        displayPic,);
+
+    if(!_id ||!packageTitle || !description || !budget || !destination){
          res.status(400);
         throw new error("Invalid data passes into backend request!!!");
     }
     else{
-        const updateShop = await Shop.findByIdAndUpdate(shopId,{
-            shopName:shopName,
-            shopAddress:shopAddress,
-            shopDescription:shopDescription,
-            shopProvince:shopProvince,
-            shopLogo:shopLogo,
+        const updatePackage = await TourPackage.findByIdAndUpdate(_id,{
+            guideName:guideName,
+            packageTitle:packageTitle,
+            description:description,
+            budget:budget,
+            numberOfDays:numberOfDays,
+            destination:destination,
+            numberOfPeoples:numberOfPeoples,
+            vehicleType:vehicleType,
+            accommodations:accommodations,
+            displayPic:displayPic,
         },
         {
             new: true,
         });
 
 
-        if(updateShop){
+        if(updatePackage){
             res.status(201).json({
-             _id:updateShop._id,
-            shopName:updateShop.shopName,
-            shopAddress:updateShop.shopAddress,
-            shopDescription:updateShop.shopDescription,
-            shopProvince:updateShop.shopProvince,
-            shopLogo:updateShop.shopLogo,
-            rank:updateShop.rank,
-            userId:updateShop.userId,
-            token:genarateToken(updateShop._id),
+             updatePackage
             })
 
-            console.log(updateShop);
+            console.log(updatePackage);
         }else{
         res.status(400);
-        throw new error("Shop not updated !!!");
+        throw new error("Package not updated !!!");
     }
     }
 
@@ -251,4 +269,4 @@ const getAllHotels = asyncHandler(async(req,res)=>{
 });
 
 
-module.exports = {registerService,fetchService,fetchPackages,addGuidePackage,updateGuidePackage,getAllHotels}
+module.exports = {registerService,fetchService,fetchPackages,addGuidePackage,updateGuidePackage,getAllHotels,deleteGuidePackage}
