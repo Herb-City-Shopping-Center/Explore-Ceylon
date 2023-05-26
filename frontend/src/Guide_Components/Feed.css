@@ -1,0 +1,9 @@
+.screllable_feed{
+    max-height: 75vh;
+    max-width: 45vw;
+    margin-left: 65px;
+    align-items: center;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+}
