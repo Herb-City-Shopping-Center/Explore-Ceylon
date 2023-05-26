@@ -13,7 +13,7 @@ const getAllHotelPackages = asyncHandler(async(req,res)=>{
     const hotelServices = await HotelPackage.find();
     
         if(hotelServices){
-            res.json({
+            res.status(200).json({
                 hotelServices
             });
         }else{
@@ -29,7 +29,7 @@ const getAllGuidePackages = asyncHandler(async(req,res)=>{
   const guidePackages = await TourPackage.find().sort({budget:-1});
   
       if(guidePackages){
-          res.json({
+          res.status(200).json({
             guidePackages
           });
       }else{
@@ -110,7 +110,7 @@ const placeOrder = asyncHandler(async(req,res)=>{
   });
 
   if(booking){
-      res.status(201).json({booking});
+      res.status(200).json({booking});
   }
   else{
       res.status(400);
@@ -136,7 +136,12 @@ const searchService = asyncHandler(async (req, res) => {
   const service = await TourPackage.find(keyword);
   console.log(service);
   //send data to frontend
-  res.send(service);
+  if(service.length>0){
+    res.status(200).send(service);
+  }
+  else{
+    res.status(400).json({message:"No matching result"})
+  }
 });
 
 
@@ -222,5 +227,44 @@ const addFeedbackTourBooking = asyncHandler(async (req, res) => {
 
 });
 
+const changeBookingStatus = asyncHandler(async(req,res)=>{
 
-module.exports = {getAllHotelPackages,getAllGuidePackages,checkOut,placeOrder,searchService,getBookingsByUserId,addFeedbackTourBooking}
+  const {_id,orderStatus} = req.body;
+
+  if(!_id || !orderStatus){
+    console.log("No Id or status".red.bold);
+  }
+  else{
+    const changeStatus = await TourBooking.findByIdAndUpdate(
+      _id,
+      {
+        orderStatus:orderStatus
+      },
+  
+      {
+        new: true,
+      }
+    );
+
+    if(changeStatus){
+      res.status(200).json({
+        status: changeStatus.orderStatus,
+         _id: changeStatus._id,
+        message: "Feedback added",
+      });
+    }
+    else{
+      res.status(404).json({
+        message: "Error while change status in Booking",
+        _id:_id,
+      });
+    }
+  }
+
+  
+  
+
+});
+
+
+module.exports = {getAllHotelPackages,getAllGuidePackages,checkOut,placeOrder,searchService,getBookingsByUserId,addFeedbackTourBooking,changeBookingStatus}

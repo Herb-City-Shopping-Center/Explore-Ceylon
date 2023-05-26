@@ -41,3 +41,5 @@ app.use("/api/admin", adminRoutes);
 
 app.use(errorHandler);
 app.use(notFound);
+
+module.exports = app;

@@ -36,13 +36,7 @@ const sections = [
   { title: "Hotel Bookings", url: "/hotel-bookings" },
 ];
 
-const deliveryMethods = [
-  { label: "DHL (600.00 lkr per item)", code: "DHL", cost: 600 },
-  { label: "Aramex (500.00 lkr per item)", code: "Aramex", cost: 500 },
-  { label: "UPS (800.00 lkr per item)", code: "UPS", cost: 800 },
-  { label: "Pronto (300.00 lkr per item)", code: "Pronto", cost: 300 },
-  { label: "DomEx (450.00 lkr per item)", code: "DomEx", cost: 450 },
-];
+
 
 const theme = createTheme();
 

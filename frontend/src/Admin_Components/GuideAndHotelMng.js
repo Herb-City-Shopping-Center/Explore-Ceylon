@@ -135,7 +135,10 @@ const columns = [
 const mdTheme = createTheme();
 const AdminSellerServiceBaseUrl = process.env.REACT_APP_ADMIN_SELLER_SERVICE_BASE_URL;
 
-function AdminSellers() {
+
+
+export default function AdminSellers() {
+
 
 // let revenue = 0;
   const [open, setOpen] = React.useState(true);
@@ -157,7 +160,6 @@ function AdminSellers() {
   };
 
   const { user } = useUser();
-  const { userId, actor } = useAuth();
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -534,6 +536,7 @@ function AdminSellers() {
               color="inherit"
               noWrap
               sx={{ flexGrow: 1 }}
+              data-testid="guide-and-hotel-heading"
             >
               Guide And Hotels
             </Typography>
@@ -649,4 +652,3 @@ function AdminSellers() {
    }
 }
 
-export default AdminSellers;

@@ -3,6 +3,7 @@ const TourPackage = require("../models/TourPackage")
 const TourBooking = require("../models/TourBooking")
 const HotelPackage = require("../models/HotelPackage")
 const Admin = require("../models/Admin");
+const Artical = require("../models/Artical")
 const asyncHandler = require('express-async-handler');
 const genarateToken = require("../config/genarateToken");
 const { green } = require('colors');
@@ -12,12 +13,12 @@ const getAllServices = asyncHandler(async(req,res)=>{
     const services = await ServiceSupplier.find();
     
         if(services){
-            res.json({
+            res.status(200).json({
                 services
             });
         }else{
             console.log("Error fetching services".red.bold);
-            res.status(401);
+            res.status(400);
             throw new error("Error fetching services");
         }
 });
@@ -103,7 +104,8 @@ const authAdmin = asyncHandler(async (req, res) => {
         userName: admin.userName,
         token: genarateToken(admin._id),
       });
-    } else {
+    }
+    else {
       //send error message to frontend
       console.log("Invalid user name or Password".red.bold);
       res.status(400).json({
@@ -111,7 +113,7 @@ const authAdmin = asyncHandler(async (req, res) => {
       });
       throw new error("Incorrect password !!!");
     }
-  });
+    });
 
 const addAdmin = asyncHandler(async (req, res) => {
     //getting body data
@@ -160,12 +162,13 @@ const addAdmin = asyncHandler(async (req, res) => {
     }
   });
 
+
 const getAllTourBookings = asyncHandler(async(req,res)=>{
 
     const booking = await TourBooking.find();
     
         if(booking){
-            res.json({
+            res.status(200).json({
               booking
             });
         }else{
@@ -175,5 +178,52 @@ const getAllTourBookings = asyncHandler(async(req,res)=>{
         }
 });
 
+const publishArtical = asyncHandler(async(req,res)=>{
 
-module.exports = {getAllServices,changeServiceStatus,getPackagesByServiceId,authAdmin,addAdmin,getAllTourBookings}
+
+  const{pic,title,description,lat,lng}=req.body;
+
+
+if(!pic || !title || !description || !lat || !lng){
+
+    console.log("All data not received".red.bold);
+    res.status(400);
+    throw new error("Please fill all the fields!!!");
+
+}
+
+    const artical = await Artical.create({
+      pic,title,description,lat,lng
+    });
+
+    if(artical){
+        res.status(200).json({artical});
+    }
+    else{
+      console.log("Publish error".red.bold);
+        res.status(400);
+        throw new error("Failed to publish artical!!!");
+    }
+
+});
+
+const getAllArticals = asyncHandler(async(req,res)=>{
+
+  const articals = await Artical.find();
+
+  console.log("Gettimng artical".green.bold);
+  console.log(articals);
+    
+        if(articals){
+            res.status(200).json({
+              articals
+            });
+        }else{
+            console.log("Error fetching articals".red.bold);
+            res.status(401);
+            throw new error("Error fetching articals");
+        }
+});
+
+
+module.exports = {getAllServices,changeServiceStatus,getPackagesByServiceId,authAdmin,addAdmin,getAllTourBookings,publishArtical,getAllArticals}

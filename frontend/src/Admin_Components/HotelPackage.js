@@ -31,12 +31,12 @@ export default function HotelPackage(props) {
 
   const toPackageView = () => {
    
-    // history.push({
-    //   pathname: "/product/view",
-    //   state: {
-    //     data: pkg,
-    //   },
-    // });
+    history.push({
+      pathname: "/package/view",
+      state: {
+        data: pkg,
+      },
+    });
   };
 
     return (

@@ -25,7 +25,6 @@ import Chart from "../Admin_Components/Chart";
 import Deposits from "../Admin_Components/Deposits";
 import Orders from "../Admin_Components/Orders";
 import { UserButton, useUser, useSignUp, useAuth } from "@clerk/clerk-react";
-
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -334,7 +333,7 @@ function LoginForm(){
             <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
               <LockOutlinedIcon />
             </Avatar>
-            <Typography component="h1" variant="h5">
+            <Typography component="h1" variant="h5" data-testid="dashboard-login-heading">
               Sign in
             </Typography>
             <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
@@ -374,7 +373,7 @@ function LoginForm(){
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
+                  <Link href="#" variant="body2" data-testid="admin-login-frogot-password">
                     Forgot password?
                   </Link>
                 </Grid>
@@ -389,11 +388,7 @@ function LoginForm(){
 
 export default function Dashboard() {
 
-  const { user } = useUser();
-  const { userId, actor } = useAuth();
-
-   
-
   return <LoginForm />;
 
 }
+

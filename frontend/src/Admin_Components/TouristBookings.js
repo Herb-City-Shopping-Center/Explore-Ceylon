@@ -21,7 +21,7 @@ import {
   mainListItems,
   secondaryListItems,
 } from "./listItems";
-import { UserButton, useUser, useSignUp, useAuth } from "@clerk/clerk-react";
+import { UserButton, useUser} from "@clerk/clerk-react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -41,6 +41,152 @@ import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Chip from '@mui/material/Chip';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Rating from '@mui/material/Rating';
+import ClearIcon from "@mui/icons-material/Clear";
+import ListItemIcon from '@mui/material/ListItemIcon';
+import RunningWithErrorsIcon from '@mui/icons-material/RunningWithErrors';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import Check from '@mui/icons-material/Check';
+import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
+import CheckIcon from '@mui/icons-material/Check';
+import CreditScoreIcon from '@mui/icons-material/CreditScore';
+
+const QontoStepIconRoot = styled('div')(({ theme, ownerState }) => ({
+  color: theme.palette.mode === 'dark' ? theme.palette.grey[700] : '#eaeaf0',
+  display: 'flex',
+  height: 22,
+  alignItems: 'center',
+  ...(ownerState.active && {
+    color: '#784af4',
+  }),
+  '& .QontoStepIcon-completedIcon': {
+    color: '#784af4',
+    zIndex: 1,
+    fontSize: 18,
+  },
+  '& .QontoStepIcon-circle': {
+    width: 8,
+    height: 8,
+    borderRadius: '50%',
+    backgroundColor: 'currentColor',
+  },
+}));
+
+function QontoStepIcon(props) {
+  const { active, completed, className } = props;
+
+  return (
+    <QontoStepIconRoot ownerState={{ active }} className={className}>
+      {completed ? (
+        <Check className="QontoStepIcon-completedIcon" />
+      ) : (
+        <div className="QontoStepIcon-circle" />
+      )}
+    </QontoStepIconRoot>
+  );
+}
+
+QontoStepIcon.propTypes = {
+  /**
+   * Whether this step is active.
+   * @default false
+   */
+  active: PropTypes.bool,
+  className: PropTypes.string,
+  /**
+   * Mark the step as completed. Is passed to child components.
+   * @default false
+   */
+  completed: PropTypes.bool,
+};
+
+const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
+  [`&.${stepConnectorClasses.alternativeLabel}`]: {
+    top: 22,
+  },
+  [`&.${stepConnectorClasses.active}`]: {
+    [`& .${stepConnectorClasses.line}`]: {
+      backgroundImage:
+        'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+    },
+  },
+  [`&.${stepConnectorClasses.completed}`]: {
+    [`& .${stepConnectorClasses.line}`]: {
+      backgroundImage:
+        'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+    },
+  },
+  [`& .${stepConnectorClasses.line}`]: {
+    height: 3,
+    border: 0,
+    backgroundColor:
+      theme.palette.mode === 'dark' ? theme.palette.grey[800] : '#eaeaf0',
+    borderRadius: 1,
+  },
+}));
+
+
+const ColorlibStepIconRoot = styled('div')(({ theme, ownerState }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[700] : '#ccc',
+  zIndex: 1,
+  color: '#fff',
+  width: 50,
+  height: 50,
+  display: 'flex',
+  borderRadius: '50%',
+  justifyContent: 'center',
+  alignItems: 'center',
+  ...(ownerState.active && {
+    backgroundImage:
+      'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
+    boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
+  }),
+  ...(ownerState.completed && {
+    backgroundImage:
+      'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
+  }),
+}));
+
+function ColorlibStepIcon(props) {
+  const { active, completed, className } = props;
+
+  const icons = {
+    1: <PendingActionsIcon />,
+    2: <CheckIcon />,
+    3: <RunningWithErrorsIcon />,
+    4: <CreditScoreIcon />,
+  };
+
+  return (
+    <ColorlibStepIconRoot ownerState={{ completed, active }} className={className}>
+      {icons[String(props.icon)]}
+    </ColorlibStepIconRoot>
+  );
+}
+
+ColorlibStepIcon.propTypes = {
+  /**
+   * Whether this step is active.
+   * @default false
+   */
+  active: PropTypes.bool,
+  className: PropTypes.string,
+  /**
+   * Mark the step as completed. Is passed to child components.
+   * @default false
+   */
+  completed: PropTypes.bool,
+  /**
+   * The label displayed in the step icon.
+   */
+  icon: PropTypes.node,
+};
+
 
 
 function TabPanel(props) {
@@ -159,6 +305,7 @@ const mdTheme = createTheme();
 const AdminServiceBaseUrl = process.env.REACT_APP_ADMIN_SERVICE_BASE_URL;
 
 function AdminOrders() {
+  
   const [open, setOpen] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [page, setPage] = React.useState(0);
@@ -170,6 +317,10 @@ function AdminOrders() {
     JSON.parse(localStorage.getItem("adminInfo"))
   );
   const [value, setValue] = React.useState(0);
+  const [stepCount, setStepCount] = React.useState(0);
+
+
+   const { user } = useUser();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -178,9 +329,6 @@ function AdminOrders() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
-  const { user } = useUser();
-  const { userId, actor } = useAuth();
 
 
   const handleChangePage = (event, newPage) => {
@@ -222,7 +370,26 @@ function AdminOrders() {
     if (order.orderStatus === "Completed") {
       setOrderStatus(true);
     }
+    
+    if(order){
+      if(order.orderStatus==="Pending"){
+        setStepCount(0);
+      }
+      else if(order.orderStatus==="Confirmed"){
+        setStepCount(1);
+      }
+      else if(order.orderStatus==="Dispatched"){
+        setStepCount(2);
+      }
+      else if(order.orderStatus==="Delivered"){
+        setStepCount(3);
+      }
+    }
   };
+  const closeOrder = ()=>{
+    setViewOrderStatus(false);
+    setCurrentViewOrder(null);
+  }
 
   function isValidUrl(string) {
     try {
@@ -269,10 +436,200 @@ function AdminOrders() {
   };
 
 
+  const steps = ['Pending', 'Confirmed', 'Processing','Completed'];
 
-    function TourBookings(){
+  function TourBookings(){
 
-      if(bookings){
+    const changeServiceStatus=async(_id)=>{
+
+      const orderStatus = "Confirmed";
+
+      if(!_id){
+        alert("No Id")
+      }
+      else{
+      
+        try {
+          const config = {
+            headers: {
+              "Content-type": "application/json",
+            },
+          };
+          const { data } = await axios.post(
+            "/api/user/changeBookingStatus",
+            {
+              _id,
+              orderStatus,
+            },
+            config
+          );
+          console.log(data);
+          Swal.fire({
+            icon: "success",
+            title: "Booking updated",
+            text: "successfully change Booking status",
+            footer: '<a href="">Why do I have this issue?</a>',
+          });
+    
+        } catch (error) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Failed to change booking status",
+            footer: '<a href="">Why do I have this issue?</a>',
+          });
+          console.log(error);
+        }
+      }
+  
+     };
+
+      if(viewOrderStatus){
+        
+        return(
+          <Box sx={{ maxWidth: "50%", marginTop: "50px", marginLeft: "200px" }}>
+            <Tooltip title="Close" placement="top-end">
+              <IconButton sx={{ marginLeft: "35vw" }} onClick={closeOrder}>
+                <ClearIcon sx={{ display: "flex" }} />
+              </IconButton>
+            </Tooltip>
+            <Typography variant="h6" gutterBottom>
+              Booking Details
+            </Typography>
+            <Avatar
+              src={currentViewOrder.packageInfo.displayPic ? currentViewOrder.packageInfo.displayPic : null}
+              sx={{ width: "300px", height: "300px", marginLeft: "140px" }}
+              variant="square"
+            ></Avatar>
+
+              <Stepper alternativeLabel activeStep={stepCount} connector={<ColorlibConnector />} sx={{mt:10}}>
+                    {steps.map((label) => (
+                      <Step key={label}>
+                        <StepLabel StepIconComponent={ColorlibStepIcon}>{label}</StepLabel>
+                      </Step>
+                    ))}
+              </Stepper>
+
+            <Paper
+              variant="outlined"
+              sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
+            >
+              <React.Fragment>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} sm={12}>
+                    <Typography variant="h6" gutterBottom>
+                      {currentViewOrder.packageInfo.packageTitle}
+                    </Typography>
+                    <List disablePadding>
+                      <ListItem
+                        key={currentViewOrder.packageInfo.budget}
+                        sx={{ py: 1, px: 0 }}
+                      >
+                        <ListItemText primary={"Unit Price"} />
+
+                        <Typography variant="body2">
+                          {currentViewOrder.packageInfo.budget + ".00 lkr"}
+                        </Typography>
+                      </ListItem>
+
+                      <ListItem
+                        key={currentViewOrder.packageInfo.budget}
+                        sx={{ py: 1, px: 0 }}
+                      >
+                        <ListItemText primary={"Number of days"} />
+
+                        <Typography variant="body2">
+                          {currentViewOrder.packageInfo.numberOfDays}
+                        </Typography>
+                      </ListItem>
+                      <ListItem
+                        key={currentViewOrder.packageInfo.budget}
+                        sx={{ py: 1, px: 0 }}
+                      >
+                        <ListItemText primary={"Order Status"} />
+                        <Typography variant="body2">
+                          {currentViewOrder.orderStatus}
+                        </Typography>
+                      </ListItem>
+
+                      <ListItem
+                        key={currentViewOrder.date}
+                        sx={{ py: 1, px: 0 }}
+                      >
+                        <ListItemText primary={"Date"} />
+                        <Typography variant="body2">
+                          {currentViewOrder.date}
+                        </Typography>
+                      </ListItem>
+
+                      <ListItem
+                        key={currentViewOrder.packageInfo.guideName}
+                        sx={{ py: 1, px: 0 }}
+                      >
+                        <ListItemText primary={"Guide Name"} />
+                        <Typography variant="body2">
+                          {currentViewOrder.packageInfo.guideName}
+                        </Typography>
+                      </ListItem>
+
+                      <ListItem
+                        key={currentViewOrder.packageInfo.destination}
+                        sx={{ py: 1, px: 0 }}
+                      >
+                        <ListItemText primary={"Tour Destination"} />
+                        <Typography variant="body2">
+                          {currentViewOrder.packageInfo.destination}
+                        </Typography>
+                      </ListItem>
+                      
+                      <ListItem
+                        key={currentViewOrder.packageInfo.accommodations._id}
+                        sx={{ py: 1, px: 0 }}
+                      >
+                        <ListItemIcon>
+                        <Avatar
+                          alt="Accommodation"
+                          src={currentViewOrder.packageInfo.accommodations.profileImage}
+                          
+                        />
+                        </ListItemIcon>
+                        
+                        <ListItemText primary={"Accommodation"} />
+    
+                        <Typography variant="body2">
+                          {currentViewOrder.packageInfo.accommodations.serviceName}
+                        </Typography>
+
+                      </ListItem>
+
+                      <ListItem
+                        key={currentViewOrder.packageInfo.accommodations._id}
+                        sx={{ py: 1, px: 0 }}
+                      >
+                        <ListItemText primary={"Accommodation Location"} />
+                        <Typography variant="body2">
+                          {currentViewOrder.packageInfo.accommodations.serviceLocation}
+                        </Typography>
+                      </ListItem>
+                    </List>
+                  
+                  </Grid>
+                </Grid>
+                {currentViewOrder.orderStatus==="Pending" ? (
+                  <Button variant="contained"
+                  onClick={() => changeServiceStatus(currentViewOrder._id)}>
+                    Confirm Booking
+                    </Button>
+                ) : (
+                  <Chip label="Confirmed" color="success" variant="outlined" />
+                )}
+              </React.Fragment>
+            </Paper>
+          </Box>
+        );
+      }
+
+      else if(bookings){
 
         return(
           <Container>
@@ -396,6 +753,7 @@ function AdminOrders() {
               color="inherit"
               noWrap
               sx={{ flexGrow: 1 }}
+              data-testid="booking-heading"
             >
               Bookings
             </Typography>

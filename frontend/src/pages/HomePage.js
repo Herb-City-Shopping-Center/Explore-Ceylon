@@ -14,6 +14,9 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import Devider from "@mui/material/Divider";
+import { useMemo } from "react";
+import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
+import './HomePage.css'
 
 const sections = [
   { title: "Home", url: "/" },
@@ -86,6 +89,10 @@ export default function HomePage() {
     getAllGuidePackages();
   }, []);
 
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+  });
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -140,10 +147,31 @@ export default function HomePage() {
         </main>
       </Container>
 
+      <Container sx={{mt:10}}>
+        <Typography variant="h3">
+          Sri Lanka Map
+        </Typography>
+
+        {!isLoaded?(
+          <div>Loading map...</div>
+        ):(
+          <Map />
+        )}
+      </Container>
+
       <Footer
         title="Footer"
         description="Something here to give the footer a purpose!"
       />
     </ThemeProvider>
+  );
+}
+function Map() {
+  const center = useMemo(() => ({ lat: 6.9271, lng: 79.8612 }), []);
+
+  return (
+    <GoogleMap zoom={10} center={center} mapContainerClassName="map-container">
+      <Marker position={center} />
+    </GoogleMap>
   );
 }

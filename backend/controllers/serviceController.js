@@ -103,7 +103,7 @@ const addGuidePackage = asyncHandler( async(req,res)=>{
 
     }
 
-        const package = await TourPackage.create({
+        const packages = await TourPackage.create({
             serviceId,
             guideName,
             packageTitle,
@@ -117,8 +117,8 @@ const addGuidePackage = asyncHandler( async(req,res)=>{
             displayPic,
         });
 
-        if(package){
-            res.status(201).json({package});
+        if(packages){
+            res.status(201).json({packages});
         }
         else{
             res.status(400);
@@ -138,9 +138,9 @@ const deleteGuidePackage = asyncHandler(async(req,res)=>{
 
     try {
 
-        const package = await TourPackage.findOneAndDelete({_id:id});
+        const packages = await TourPackage.findOneAndDelete({_id:id});
 
-        if(package){
+        if(packages){
             res.status(201).json({
                 packageId:id
             })
