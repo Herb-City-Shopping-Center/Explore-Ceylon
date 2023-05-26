@@ -13,6 +13,7 @@ const tourSchema = mongoose.Schema(
     destination: { type: "String", required: true, default: 0 },
     numberOfPeoples: { type: "String", required: true, default: 0 },
     vehicleType: { type: "String", required: true, default:"Van"},
+    feedback: [{type:"String"}],
     accommodations:{type: Object},//add type as mongo object
     displayPic: {
       type: "String",

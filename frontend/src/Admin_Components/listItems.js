@@ -36,12 +36,12 @@ export const mainListItems = (
       <ListItemText primary="Guide & Hotels" />
     </ListItemButton>
 
-    <ListItemButton to={"/admin/guide-review"}>
+    {/* <ListItemButton to={"/admin/guide-review"}>
       <ListItemIcon>
         <GradingIcon />
       </ListItemIcon>
       <ListItemText primary="Review" />
-    </ListItemButton>
+    </ListItemButton> */}
 
     <ListItemButton to={"/admin/guide-articals"}>
       <ListItemIcon>

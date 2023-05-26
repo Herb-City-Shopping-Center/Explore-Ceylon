@@ -162,7 +162,65 @@ const getBookingsByUserId = asyncHandler(async(req,res)=>{
             res.status(401);
             throw new error("Error fetching packages");
         }
-})
+});
+
+const addFeedbackTourBooking = asyncHandler(async (req, res) => {
+  const { feedback,_id,bookingId } = req.body;
+
+   console.log(feedback,_id,bookingId);
+ 
+
+   const addFeedback = await TourPackage.findByIdAndUpdate(
+    _id,
+    {
+      "$push": {
+        "feedback": feedback
+      }
+    },
+
+    {
+      new: true,
+    }
+  );
+
+  if(addFeedback){
+
+    const addFeedbackToBooking = await TourBooking.findByIdAndUpdate(
+      bookingId,
+      {
+        "$push": {
+          "packageInfo.feedback": feedback
+        }
+      },
+  
+      {
+        new: true,
+      }
+    );
+    if(addFeedbackToBooking){
+      res.status(201).json({
+        feedback: addFeedback.feedback,
+         _id: addFeedback._id,
+        message: "Feedback added",
+      });
+    }
+    else{
+      res.status(404).json({
+        message: "Error while adding feedback into Booking",
+        _id:_id,
+      });
+    }
+    
+  }
+  else{
+    res.status(404).json({
+      message: "Error while adding feedback into db",
+      _id:_id,
+    });
+  }
 
 
-module.exports = {getAllHotelPackages,getAllGuidePackages,checkOut,placeOrder,searchService,getBookingsByUserId}
+});
+
+
+module.exports = {getAllHotelPackages,getAllGuidePackages,checkOut,placeOrder,searchService,getBookingsByUserId,addFeedbackTourBooking}

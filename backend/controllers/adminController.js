@@ -1,5 +1,6 @@
 const ServiceSupplier = require("../models/ServiceSuppliers");
 const TourPackage = require("../models/TourPackage")
+const TourBooking = require("../models/TourBooking")
 const HotelPackage = require("../models/HotelPackage")
 const Admin = require("../models/Admin");
 const asyncHandler = require('express-async-handler');
@@ -159,4 +160,20 @@ const addAdmin = asyncHandler(async (req, res) => {
     }
   });
 
-module.exports = {getAllServices,changeServiceStatus,getPackagesByServiceId,authAdmin,addAdmin}
+const getAllTourBookings = asyncHandler(async(req,res)=>{
+
+    const booking = await TourBooking.find();
+    
+        if(booking){
+            res.json({
+              booking
+            });
+        }else{
+            console.log("Error fetching bookings".red.bold);
+            res.status(401);
+            throw new error("Error fetching bookings");
+        }
+});
+
+
+module.exports = {getAllServices,changeServiceStatus,getPackagesByServiceId,authAdmin,addAdmin,getAllTourBookings}

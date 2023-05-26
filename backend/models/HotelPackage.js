@@ -12,6 +12,7 @@ const hotelSchema = mongoose.Schema(
     numberOfDays: { type: "String", required: true, default: 0 },
     numberOfPeoples: { type: "String", required: true, default: 0 },
     accommodationType: { type: "String", required: true, default:"non A/C" },
+    feedback: [{tyep:"String"}],
     displayPic: {
       type: "String",
       require: true,

@@ -5,138 +5,182 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Title from "./Title";
+import axios from "axios";
+import { useState } from "react";
+import { useEffect } from "react";
+import TableContainer from "@mui/material/TableContainer";
+import TablePagination from "@mui/material/TablePagination";
+import { UserButton, useUser, useSignUp, useAuth } from "@clerk/clerk-react";
+import Container from "@mui/material/Container";
+import Paper from "@mui/material/Paper";
+import Avatar from "@mui/material/Avatar";
 
-// Generate Order Data
-function createData(id, date, name, shipTo, paymentMethod, amount) {
-  return { id, date, name, shipTo, paymentMethod, amount };
-}
 
-const rows = [
-  createData(
-    0,
-    "16 Mar, 2019",
-    "Elvis Presley",
-    "Tupelo, MS",
-    "VISA ⠀•••• 3719",
-    312.44
-  ),
-  createData(
-    1,
-    "16 Mar, 2019",
-    "Paul McCartney",
-    "London, UK",
-    "VISA ⠀•••• 2574",
-    866.99
-  ),
-  createData(
-    2,
-    "16 Mar, 2019",
-    "Tom Scholz",
-    "Boston, MA",
-    "MC ⠀•••• 1253",
-    100.81
-  ),
-  createData(
-    3,
-    "16 Mar, 2019",
-    "Michael Jackson",
-    "Gary, IN",
-    "AMEX ⠀•••• 2000",
-    654.39
-  ),
-  createData(
-    4,
-    "15 Mar, 2019",
-    "Bruce Springsteen",
-    "Long Branch, NJ",
-    "VISA ⠀•••• 5919",
-    212.79
-  ),
+
+const columns = [
+  { id: "fname", label: "Name", minWidth: 170 },
+  { id: "email", label: "Tourist Email", minWidth: 100 },
+  {
+    id: "customerPhone",
+    label: "Conatact",
+    minWidth: 170,
+    align: "right",
+    format: (value) => value.toLocaleString("en-US"),
+  },
+  {
+    id: "orderStatus",
+    label: "Booking Status",
+    minWidth: 170,
+    align: "right",
+    format: (value) => value.toLocaleString("en-US"),
+  },
+  {
+    id: "date",
+    label: "Date",
+    minWidth: 170,
+    align: "right",
+  },
+  {
+    id: "country",
+    label: "Origin Country",
+    minWidth: 170,
+    align: "right",
+    format: (value) => value.toFixed(2),
+  },
 ];
 
-let tempBookings = [
-  {
-    touristName: "Sam",
-    touristEmail: "sam@gmail.com",
-    serviceType:"Guide Booking",
-    bookingStatus:"Pending",
-    supplierName: "Sahan",
-    orderTotal: 9500,
-  },
-  {
-    touristName: "Sam",
-    touristEmail: "sam@gmail.com",
-    serviceType:"Guide Booking",
-    bookingStatus:"Pending",
-    supplierName: "Sahan",
-    orderTotal: 9500,
-  },
-  {
-    touristName: "Sam",
-    touristEmail: "sam@gmail.com",
-    serviceType:"Guide Booking",
-    bookingStatus:"Pending",
-    supplierName: "Sahan",
-    orderTotal: 9500,
-  },
-  {
-    touristName: "Sam",
-    touristEmail: "sam@gmail.com",
-    serviceType:"Guide Booking",
-    bookingStatus:"Pending",
-    supplierName: "Sahan",
-    orderTotal: 9500,
-  },
-  {
-    touristName: "Sam",
-    touristEmail: "sam@gmail.com",
-    serviceType:"Guide Booking",
-    bookingStatus:"Pending",
-    supplierName: "Sahan",
-    orderTotal: 9500,
-  },
 
-];
-
-function preventDefault(event) {
-  event.preventDefault();
+function isValidUrl(string) {
+  try {
+    new URL(string);
+    return true;
+  } catch (err) {
+    return false;
+  }
 }
 
 export default function Orders() {
 
-
-  
-  return (
-    <React.Fragment>
-      <Title>Recent Bookings</Title>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Tourist Name</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell>Service Type</TableCell>
-            <TableCell>Booking Status</TableCell>
-            <TableCell>Supplier Name</TableCell>
-            <TableCell align="right">Sale Amount</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {tempBookings.map((row) => (
-            <TableRow key={row.touristName}>
-              <TableCell>{row.touristName}</TableCell>
-              <TableCell>{row.touristEmail}</TableCell>
-              <TableCell>{row.serviceType}</TableCell>
-              <TableCell>{row.bookingStatus}</TableCell>
-              <TableCell>{row.supplierName}</TableCell>
-              <TableCell align="right">{`$${row.orderTotal}`}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
-        See more orders
-      </Link>
-    </React.Fragment>
+  const [bookings, setBooking] = useState();
+  const [loginData, setLoginData] = useState(
+    JSON.parse(localStorage.getItem("adminInfo"))
   );
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [page, setPage] = React.useState(0);
+
+
+
+  const { user } = useUser();
+  const { userId, actor } = useAuth();
+
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
+  const getAllTourBookings = async () => {
+    try {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${loginData.token}`,
+        },
+      };
+      const { data } = await axios.post(
+        "/api/admin/getAllTourBookings",
+        {},
+        config
+      );
+
+      setBooking(data);
+      console.log(data);
+    } catch (error) {
+      console.log(error.response.data.error);
+    }
+  };
+  useEffect(() => {
+    getAllTourBookings();
+  }, []);
+
+
+  if(bookings){
+
+    return(
+      <Container>
+        <h3>Recent Bookings</h3>
+      <Paper sx={{ width: "100%", overflow: "hidden" }}>
+        <TableContainer sx={{ maxHeight: 440 }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    align={column.align}
+                    style={{ minWidth: column.minWidth }}
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {bookings.booking.map((order) => {
+                return (
+                  <TableRow
+                    hover
+                    role="checkbox"
+                    tabIndex={-1}
+                    key={order.code}
+                    
+                  >
+                    {columns.map((column) => {
+                      var value = order[column.id];
+                    
+                        return (
+                          <TableCell key={column.id} align={column.align}>
+                            {isValidUrl(value) ? (
+                              <Avatar
+                                variant="square"
+                                src={value}
+                                sx={{ width: "80px", height: "80px" }}
+                              ></Avatar>
+                            ) : (
+                              value
+                            )}
+                          </TableCell>
+                        );
+                      
+                    })}
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 100]}
+          component="div"
+          count={bookings.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
+    </Container>
+    );
+  }
+  else{
+
+    return(
+      <div>Loading...</div>
+    )
+
+  }
 }

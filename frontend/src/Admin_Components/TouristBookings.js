@@ -37,6 +37,44 @@ import Button from "@mui/material/Button";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import Swal from "sweetalert2";
 import { useState } from "react";
+import PropTypes from 'prop-types';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Chip from '@mui/material/Chip';
+
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`vertical-tabpanel-${index}`}
+      aria-labelledby={`vertical-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `vertical-tab-${index}`,
+    'aria-controls': `vertical-tabpanel-${index}`,
+  };
+}
 
 const drawerWidth = 240;
 
@@ -85,80 +123,37 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 const columns = [
-  { id: "touristName", label: "Tourist Name", minWidth: 170 },
-  { id: "touristEmail", label: "Tourist Email", minWidth: 100 },
+  { id: "fname", label: "Name", minWidth: 170 },
+  { id: "email", label: "Tourist Email", minWidth: 100 },
   {
-    id: "serviceType",
-    label: "Service Type",
+    id: "customerPhone",
+    label: "Conatact",
     minWidth: 170,
     align: "right",
     format: (value) => value.toLocaleString("en-US"),
   },
   {
-    id: "bookingStatus",
+    id: "orderStatus",
     label: "Booking Status",
     minWidth: 170,
     align: "right",
     format: (value) => value.toLocaleString("en-US"),
   },
   {
-    id: "supplierName",
-    label: "Supplier Name",
+    id: "date",
+    label: "Date",
     minWidth: 170,
     align: "right",
   },
   {
-    id: "orderTotal",
-    label: "Order Total",
+    id: "country",
+    label: "Origin Country",
     minWidth: 170,
     align: "right",
     format: (value) => value.toFixed(2),
   },
 ];
 
-let tempBookings = [
-  {
-    touristName: "Sam",
-    touristEmail: "sam@gmail.com",
-    serviceType:"Guide Booking",
-    bookingStatus:"Pending",
-    supplierName: "Sahan",
-    orderTotal: 9500,
-  },
-  {
-    touristName: "Sam",
-    touristEmail: "sam@gmail.com",
-    serviceType:"Guide Booking",
-    bookingStatus:"Pending",
-    supplierName: "Sahan",
-    orderTotal: 9500,
-  },
-  {
-    touristName: "Sam",
-    touristEmail: "sam@gmail.com",
-    serviceType:"Guide Booking",
-    bookingStatus:"Pending",
-    supplierName: "Sahan",
-    orderTotal: 9500,
-  },
-  {
-    touristName: "Sam",
-    touristEmail: "sam@gmail.com",
-    serviceType:"Guide Booking",
-    bookingStatus:"Pending",
-    supplierName: "Sahan",
-    orderTotal: 9500,
-  },
-  {
-    touristName: "Sam",
-    touristEmail: "sam@gmail.com",
-    serviceType:"Guide Booking",
-    bookingStatus:"Pending",
-    supplierName: "Sahan",
-    orderTotal: 9500,
-  },
-
-];
 
 const mdTheme = createTheme();
 const AdminServiceBaseUrl = process.env.REACT_APP_ADMIN_SERVICE_BASE_URL;
@@ -167,13 +162,18 @@ function AdminOrders() {
   const [open, setOpen] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [page, setPage] = React.useState(0);
-  const [orders, setOrders] = React.useState(tempBookings);
+  const [bookings, setBooking] = React.useState();
   const [viewOrderStatus, setViewOrderStatus] = React.useState(false);
   const [currentViewOrder, setCurrentViewOrder] = React.useState(null);
   const [orderStatus, setOrderStatus] = React.useState(false);
   const [loginData, setLoginData] = useState(
     JSON.parse(localStorage.getItem("adminInfo"))
   );
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -192,7 +192,7 @@ function AdminOrders() {
     setPage(0);
   };
 
-  const getAllOrders = async () => {
+  const getAllTourBookings = async () => {
     try {
       const config = {
         headers: {
@@ -201,19 +201,19 @@ function AdminOrders() {
         },
       };
       const { data } = await axios.post(
-        AdminServiceBaseUrl + "/admin/getAllOrders",
+        "/api/admin/getAllTourBookings",
         {},
         config
       );
 
-      setOrders(data);
+      setBooking(data);
       console.log(data);
     } catch (error) {
       console.log(error.response.data.error);
     }
   };
   useEffect(() => {
-    getAllOrders();
+    getAllTourBookings();
   }, []);
 
   const viewOrder = (order) => {
@@ -260,7 +260,7 @@ function AdminOrders() {
             title: "Order Confirmed",
             text: "Order has been successfully confirmed",
           });
-          getAllOrders();
+          getAllTourBookings();
         } catch (error) {
           console.log(error.response.data.error);
         }
@@ -268,9 +268,103 @@ function AdminOrders() {
     });
   };
 
+
+
+    function TourBookings(){
+
+      if(bookings){
+
+        return(
+          <Container>
+          <Paper sx={{ width: "100%", overflow: "hidden" }}>
+            <TableContainer sx={{ maxHeight: 440 }}>
+              <Table stickyHeader aria-label="sticky table">
+                <TableHead>
+                  <TableRow>
+                    {columns.map((column) => (
+                      <TableCell
+                        key={column.id}
+                        align={column.align}
+                        style={{ minWidth: column.minWidth }}
+                      >
+                        {column.label}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {bookings.booking.map((order) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={order.code}
+                        onClick={() => viewOrder(order)}
+                      >
+                        {columns.map((column) => {
+                          var value = order[column.id];
+                        
+                            return (
+                              <TableCell key={column.id} align={column.align}>
+                                {isValidUrl(value) ? (
+                                  <Avatar
+                                    variant="square"
+                                    src={value}
+                                    sx={{ width: "80px", height: "80px" }}
+                                  ></Avatar>
+                                ) : (
+                                  column.id==="orderStatus"?(
+                                    value==="Pending"?(
+                                    <Chip label={value} color="error" />
+                                    ):(
+                                      value==="Confirmed"?(
+                                        <Chip label={value} color="success" />
+                                      ):(
+                                        <Chip label={value} color="primary" variant="outlined" />
+                                      )
+                                    )
+                                  ):(
+                                    value
+                                  )
+                                )}
+                              </TableCell>
+                            );
+                          
+                        })}
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[10, 25, 100]}
+              component="div"
+              count={bookings.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </Paper>
+        </Container>
+        );
+      }
+      else{
+
+        return(
+          <div>Loading...</div>
+        )
+
+      }
+    }
+
   return (
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: "flex" }}>
+
+
         <CssBaseline />
         <AppBar position="absolute" open={open}>
           <Toolbar
@@ -335,69 +429,36 @@ function AdminOrders() {
 
         {/* Orders */}
 
-        <Container sx={{ marginTop: "15vh" }}>
-          <Paper sx={{ width: "100%", overflow: "hidden" }}>
-            <TableContainer sx={{ maxHeight: 440 }}>
-              <Table stickyHeader aria-label="sticky table">
-                <TableHead>
-                  <TableRow>
-                    {columns.map((column) => (
-                      <TableCell
-                        key={column.id}
-                        align={column.align}
-                        style={{ minWidth: column.minWidth }}
-                      >
-                        {column.label}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {orders.map((order) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={order.code}
-                        onClick={() => viewOrder(order)}
-                      >
-                        {columns.map((column) => {
-                          var value = order[column.id];
-                         
-                            return (
-                              <TableCell key={column.id} align={column.align}>
-                                {isValidUrl(value) ? (
-                                  <Avatar
-                                    variant="square"
-                                    src={value}
-                                    sx={{ width: "80px", height: "80px" }}
-                                  ></Avatar>
-                                ) : (
-                                  value
-                                )}
-                              </TableCell>
-                            );
-                          
-                        })}
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              rowsPerPageOptions={[10, 25, 100]}
-              component="div"
-              count={orders.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </Paper>
-        </Container>
+        <Box
+      sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 224,mt:10 }}
+    >
+      <Tabs
+        orientation="vertical"
+        variant="scrollable"
+        value={value}
+        onChange={handleChange}
+        aria-label="Vertical tabs example"
+        sx={{ borderRight: 1, borderColor: 'divider' }}
+      >
+        <Tab label="Tour Bookings" {...a11yProps(0)} />
+        <Tab label="Hotel Bookings" {...a11yProps(1)} />
+      
+      </Tabs>
+      <TabPanel value={value} index={0}>
+
+      <TourBookings/>
+
+      </TabPanel>
+
+      <TabPanel value={value} index={1}>
+
+      <TourBookings/>
+
+      </TabPanel>
+    </Box>
+
         {/* End of Orders */}
+
         
       </Box>
     </ThemeProvider>
