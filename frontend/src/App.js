@@ -25,12 +25,12 @@ import Review from "./Client_Components/orderCheckout/Review";
 import CustomerOrders from "./Client_Components/CustomerOrders";
 import GuideAndHotelMng from './Admin_Components/GuideAndHotelMng';
 import AdminOrders from './Admin_Components/TouristBookings';
-import Reviews from "./Admin_Components/Reviews";
 import Articals from "./Admin_Components/Articals";
 
 const clerkPubKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
 
 function App() {
+
   return (
     <div className="App">
       <ClerkProvider publishableKey={clerkPubKey}>
@@ -50,7 +50,6 @@ function App() {
 
           <Route path="/admin" component={AdminDashboard} exact />
           <Route path="/admin/guide-hotel-mng" component={GuideAndHotelMng} exact />
-          <Route path="/admin/guide-review" component={Reviews} exact />
           <Route path="/admin/guide-articals" component={Articals} exact />
           <Route path="/admin/tourist-bookings" component={AdminOrders} exact />
         </SignedIn>
