@@ -1,0 +1,7 @@
+.cartBox{
+    overflow-y: scroll;
+    max-height: 90vh;
+    scroll-behavior: smooth;
+    background-color: #fafafa;
+    min-height: 10vh;
+}

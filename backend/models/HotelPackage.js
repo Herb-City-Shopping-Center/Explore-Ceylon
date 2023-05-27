@@ -1,20 +1,18 @@
 const mongoose = require("mongoose");
 
 //create tour modal
-const tourSchema = mongoose.Schema(
+const hotelSchema = mongoose.Schema(
   {
     serviceId: { type: "String", required: true },
-    guideName: { type: "String", required: true },
+    hotelName: { type: "String", required: true },
     packageStatus: { type: "String", default:"active" },//mnee to add in backend
     packageTitle: { type: "String", required: true, default: 0 },
     description: { type: "String", required: true, default: 0 },
     budget: { type: "String", required: true, default: 0 },
     numberOfDays: { type: "String", required: true, default: 0 },
-    destination: { type: "String", required: true, default: 0 },
     numberOfPeoples: { type: "String", required: true, default: 0 },
-    vehicleType: { type: "String", required: true, default:"Van"},
-    feedback: [{type:"String"}],
-    accommodations:{type: Object},//add type as mongo object
+    accommodationType: { type: "String", required: true, default:"non A/C" },
+    feedback: [{tyep:"String"}],
     displayPic: {
       type: "String",
       require: true,
@@ -27,6 +25,6 @@ const tourSchema = mongoose.Schema(
   }
 );
 
-const TourPackage = mongoose.model("TourPackage", tourSchema);
+const HotelPackage = mongoose.model("HotelPackage", hotelSchema);
 
-module.exports = TourPackage;
+module.exports = HotelPackage;
