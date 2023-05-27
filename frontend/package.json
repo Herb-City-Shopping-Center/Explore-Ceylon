@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://explore-ceylon-main-services.onrender.com",
+  "proxy": "http://localhost:5000",
   "dependencies": {
     "@clerk/clerk-react": "^4.15.1",
     "@emotion/react": "^11.11.0",
@@ -26,8 +26,10 @@
     "react-window": "^1.8.9",
     "recharts": "^2.5.0",
     "sweetalert2": "^11.7.3",
+    "sz-react-utils": "^1.1.9",
     "validator": "^13.7.0",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yup": "^1.2.0"
   },
   "scripts": {
     "start": "react-scripts start",

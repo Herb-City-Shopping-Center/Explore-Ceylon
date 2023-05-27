@@ -231,6 +231,7 @@ function DashboardContent() {
   );
 }
 
+
 function LoginForm(){
 
   const [loginStatus,setLoginStatus] = React.useState(false);
@@ -345,7 +346,9 @@ function LoginForm(){
                 label="User Name"
                 name="userName"
                 autoComplete="userName"
+                data-testid="admin-user-name"
                 autoFocus
+                value={""}
                 onChange={(e)=>setUserName(e.target.value)}
               />
               <TextField
@@ -355,6 +358,7 @@ function LoginForm(){
                 name="password"
                 label="Password"
                 type="password"
+                data-testid="admin-password"
                 id="password"
                 autoComplete="current-password"
                 onChange={(e)=>setPassword(e.target.value)}
@@ -388,7 +392,7 @@ function LoginForm(){
 
 export default function Dashboard() {
 
-  return <LoginForm />;
+  return <LoginForm data-testid="admin-dashboard"/>;
 
 }
 

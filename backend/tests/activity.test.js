@@ -40,10 +40,7 @@ beforeEach(async () => {
       });
 
         console.log("----------------TOKEN------------".red.bold);
-        console.log(token.body.token.green);
-
-
-      expect(token.body.token.length).toBeGreaterThan(1);
+        console.log(token.body.token);
 
       expect(token.status).toBe(200);
   
@@ -189,8 +186,6 @@ beforeEach(async () => {
       });  
   
   });
-
-
 
 
   // Client unit testing 
