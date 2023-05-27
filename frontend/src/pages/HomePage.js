@@ -52,7 +52,7 @@ export default function HomePage() {
         },
       };
       const { data } = await axios.post(
-        "http://localhost:5000/api/user/get-all-hotel-packages",
+        "/api/user/get-all-hotel-packages",
         {},
         config
       );
@@ -72,7 +72,7 @@ export default function HomePage() {
         },
       };
       const { data } = await axios.post(
-        "http://localhost:5000/api/user/get-all-guide-packages",
+        "/api/user/get-all-guide-packages",
         {},
         config
       );

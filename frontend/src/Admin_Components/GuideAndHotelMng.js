@@ -266,7 +266,7 @@ export default function AdminSellers() {
           },
         };
         const { data } = await axios.post(
-          "http://localhost:5000/api/admin/changeServiceStatus",
+          "/api/admin/changeServiceStatus",
           {
             serviceId,
             updateStatus,

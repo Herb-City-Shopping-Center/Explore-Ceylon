@@ -74,7 +74,7 @@ export default function Review(props) {
             },
           };
           const { data } = await axios.post(
-            "http://localhost:5000/api/user/placeOrder",
+            "/api/user/placeOrder",
             {
               addressInfo,
               packageInfo,
