@@ -278,7 +278,7 @@ function LoginForm(){
           },
         };
         const { data } = await axios.post(
-          "http://localhost:5000/api/admin/authAdmin",
+          "/api/admin/authAdmin",
           {
             userName,
             password,
