@@ -348,7 +348,6 @@ function LoginForm(){
                 autoComplete="userName"
                 data-testid="admin-user-name"
                 autoFocus
-                value={""}
                 onChange={(e)=>setUserName(e.target.value)}
               />
               <TextField
